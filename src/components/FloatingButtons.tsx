@@ -1,34 +1,32 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MessageCircle, ShoppingBag, CalendarPlus } from 'lucide-react';
+import { MessageCircle, ShoppingBag, UtensilsCrossed } from 'lucide-react';
 import { site } from '@/data/site';
 import { useCart } from '@/context/CartContext';
 
 export default function FloatingButtons() {
   const navigate = useNavigate();
   const { totalItems, openCart } = useCart();
-  const [showReserve, setShowReserve] = useState(false);
+  const [showOrder, setShowOrder] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setShowReserve(window.scrollY > 400);
+    const onScroll = () => setShowOrder(window.scrollY > 400);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
     <>
-      {/* Reserve Table — bottom left */}
       <button
-        onClick={() => navigate('/contact')}
+        onClick={() => navigate('/menu')}
         className={`fixed bottom-6 left-6 z-40 bg-are-paprika text-are-ivory font-label text-xs font-semibold tracking-wider px-5 py-3 rounded-full shadow-lg shadow-are-paprika/30 hover:scale-105 hover:bg-are-paprika/90 transition-all duration-300 flex items-center gap-2 ${
-          showReserve ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
+          showOrder ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'
         }`}
       >
-        <CalendarPlus className="w-4 h-4" />
-        Reserve Table
+        <UtensilsCrossed className="w-4 h-4" />
+        Start an Order
       </button>
 
-      {/* Cart — bottom right, above WhatsApp */}
       <button
         onClick={openCart}
         className="fixed bottom-24 right-6 z-40 w-14 h-14 rounded-full bg-are-gold text-are-black shadow-lg shadow-are-gold/30 hover:scale-110 transition-all duration-300 flex items-center justify-center"
@@ -42,7 +40,6 @@ export default function FloatingButtons() {
         )}
       </button>
 
-      {/* WhatsApp — bottom right */}
       <a
         href={site.whatsapp}
         target="_blank"

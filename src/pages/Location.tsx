@@ -5,7 +5,7 @@ import { site } from '@/data/site';
 
 const contactItems = [
   { icon: MapPin, label: 'Address', value: site.address },
-  { icon: Clock, label: 'Opening Hours', value: 'Hours updated regularly. WhatsApp to confirm before visiting.' },
+  { icon: Clock, label: 'Opening Hours', value: 'Open daily 08:00 – 23:45' },
   { icon: Phone, label: 'Phone', value: site.phone, href: `tel:${site.phoneRaw}` },
   { icon: Smartphone, label: 'Mobile', value: site.phone, href: `tel:${site.phoneRaw}` },
   { icon: Mail, label: 'Email', value: site.email, href: `mailto:${site.email}` },
