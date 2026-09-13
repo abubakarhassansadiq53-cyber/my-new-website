@@ -1,0 +1,202 @@
+export interface MenuItem {
+  id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  popular?: boolean;
+  vegetarian?: boolean;
+  spicy?: boolean;
+}
+
+export const menuCategories = [
+  'Starters',
+  'Main Courses',
+  'Soups & Stews',
+  'Sides',
+  'Drinks',
+  'Desserts',
+] as const;
+
+export const menuItems: MenuItem[] = [
+  {
+    id: 'puff-puff',
+    name: 'Puff Puff',
+    description: 'Golden fried sweet dough balls, fluffy inside, crispy outside. A West African classic.',
+    price: 5,
+    category: 'Starters',
+    popular: true,
+    vegetarian: true,
+  },
+  {
+    id: 'plantain-chips',
+    name: 'Plantain Chips',
+    description: 'Crispy thinly sliced plantains served with pepper sauce dip.',
+    price: 4,
+    category: 'Starters',
+    vegetarian: true,
+  },
+  {
+    id: 'suya-skewers',
+    name: 'Suya Beef Skewers',
+    description: 'Grilled beef skewers coated in spicy yaji peanut spice blend. Smoky and bold.',
+    price: 8,
+    category: 'Starters',
+    popular: true,
+    spicy: true,
+  },
+  {
+    id: 'moin-moin',
+    name: 'Moin Moin',
+    description: 'Steamed bean pudding with peppers, onions, and spices. Rich and savoury.',
+    price: 6,
+    category: 'Starters',
+    vegetarian: true,
+  },
+  {
+    id: 'jollof-rice',
+    name: 'Jollof Rice with Chicken',
+    description: 'Smoky tomato-based rice cooked with peppers and spices, served with grilled chicken.',
+    price: 14,
+    category: 'Main Courses',
+    popular: true,
+  },
+  {
+    id: 'jollof-beef',
+    name: 'Jollof Rice with Beef',
+    description: 'Our signature Jollof rice paired with tender spiced beef chunks.',
+    price: 15,
+    category: 'Main Courses',
+  },
+  {
+    id: 'jollof-fish',
+    name: 'Jollof Rice with Grilled Fish',
+    description: 'Smoky Jollof rice served with perfectly grilled tilapia and fresh lime.',
+    price: 16,
+    category: 'Main Courses',
+  },
+  {
+    id: 'fried-rice',
+    name: 'Nigerian Fried Rice',
+    description: 'Colourful mixed vegetable fried rice with liver, shrimp, and warm spices.',
+    price: 13,
+    category: 'Main Courses',
+    popular: true,
+  },
+  {
+    id: 'asaro',
+    name: 'Yam Pottage (Asaro)',
+    description: 'Creamy mashed yam cooked in palm oil with smoked fish and spices.',
+    price: 12,
+    category: 'Main Courses',
+  },
+  {
+    id: 'egusi-soup',
+    name: 'Egusi Soup',
+    description: 'Rich melon seed soup with leafy greens, palm oil, and assorted meats. Served with pounded yam.',
+    price: 16,
+    category: 'Soups & Stews',
+    popular: true,
+  },
+  {
+    id: 'okra-soup',
+    name: 'Okra Soup',
+    description: 'Hearty okra soup with assorted meats and fish. Served with your choice of swallow.',
+    price: 15,
+    category: 'Soups & Stews',
+  },
+  {
+    id: 'ewa-agoyin',
+    name: 'Ewa Agoyin',
+    description: 'Soft-cooked beans served with spicy pepper sauce. A Lagos street food favourite.',
+    price: 10,
+    category: 'Soups & Stews',
+    spicy: true,
+  },
+  {
+    id: 'banga-soup',
+    name: 'Banga Soup',
+    description: 'Creamy palm fruit soup with seafood and assorted meats. A Niger Delta specialty.',
+    price: 16,
+    category: 'Soups & Stews',
+  },
+  {
+    id: 'dodo',
+    name: 'Dodo (Fried Plantain)',
+    description: 'Sweet ripe plantains fried golden. The perfect side to any meal.',
+    price: 4,
+    category: 'Sides',
+    vegetarian: true,
+  },
+  {
+    id: 'pounded-yam',
+    name: 'Pounded Yam',
+    description: 'Smooth stretchy pounded yam swallow, the classic accompaniment to any soup.',
+    price: 5,
+    category: 'Sides',
+    vegetarian: true,
+  },
+  {
+    id: 'eba',
+    name: 'Eba (Garri)',
+    description: 'Cassava flour swallow, light and filling. Pairs perfectly with Egusi or Okra soup.',
+    price: 4,
+    category: 'Sides',
+    vegetarian: true,
+  },
+  {
+    id: 'coconut-rice',
+    name: 'Coconut Rice',
+    description: 'Fragrant rice cooked in coconut milk with shrimp and vegetables.',
+    price: 12,
+    category: 'Sides',
+  },
+  {
+    id: 'zobo',
+    name: 'Zobo Drink',
+    description: 'Refreshing hibiscus flower tea, sweetened and chilled. Deep ruby red.',
+    price: 4,
+    category: 'Drinks',
+    popular: true,
+    vegetarian: true,
+  },
+  {
+    id: 'chapman',
+    name: 'Chapman Cocktail',
+    description: 'Nigerian\'s favourite fruity cocktail with grenadine, citrus, and bitters.',
+    price: 6,
+    category: 'Drinks',
+  },
+  {
+    id: 'palm-wine',
+    name: 'Palm Wine',
+    description: 'Traditional fermented palm sap, slightly sweet and tangy. A true African experience.',
+    price: 7,
+    category: 'Drinks',
+  },
+  {
+    id: 'chin-chin',
+    name: 'Chin Chin',
+    description: 'Crunchy fried milk dough bites, lightly sweetened. A beloved Nigerian snack.',
+    price: 5,
+    category: 'Desserts',
+    vegetarian: true,
+  },
+  {
+    id: 'puff-puff-dessert',
+    name: 'Puff Puff with Honey',
+    description: 'Our golden puff puff drizzled with raw honey and a dusting of cinnamon.',
+    price: 6,
+    category: 'Desserts',
+    popular: true,
+    vegetarian: true,
+  },
+  {
+    id: 'coconut-pudding',
+    name: 'Coconut Pudding',
+    description: 'Silky coconut milk pudding with caramelised plantain and tropical fruits.',
+    price: 7,
+    category: 'Desserts',
+    vegetarian: true,
+  },
+];
