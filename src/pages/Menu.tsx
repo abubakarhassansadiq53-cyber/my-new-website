@@ -6,6 +6,16 @@ import { menuCategories, type MenuItem } from '@/data/menu';
 import { useCart } from '@/context/CartContext';
 import { supabase } from '@/lib/supabase';
 
+const SIZE_PRICES: Record<string, number> = {
+  Small: 8, Medium: 12, Large: 16,
+};
+
+export function getPriceForSize(item: MenuItem, size: string | null): number | null {
+  if (item.price !== null) return item.price;
+  if (size && SIZE_PRICES[size]) return SIZE_PRICES[size];
+  return null;
+}
+
 export default function Menu() {
   const [activeCategory, setActiveCategory] = useState<string>('Rice Dishes');
   const [allItems, setAllItems] = useState<MenuItem[]>([]);
@@ -19,9 +29,7 @@ export default function Menu() {
         .select('*')
         .eq('available', true)
         .order('sort_order', { ascending: true });
-      if (error) {
-        console.error('Failed to load menu:', error);
-      }
+      if (error) console.error('Failed to load menu:', error);
       setAllItems((data as MenuItem[]) ?? []);
       setLoading(false);
     };
@@ -34,34 +42,21 @@ export default function Menu() {
 
   return (
     <div className="pt-20">
-      {/* Hero */}
       <section className="bg-[#321B29] py-16 relative overflow-hidden kente-overlay">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <SectionTitle
-            eyebrow="Our Menu"
-            title="Our"
-            italicPart="Menu"
-            subtitle="Authentic Nigerian & West African Cuisine"
-            light
-          />
+          <SectionTitle eyebrow="Our Menu" title="Our" italicPart="Menu" subtitle="Authentic Nigerian & West African Cuisine" light />
           <div className="w-24 h-1 bg-are-gold mx-auto mt-6 rounded-full" />
         </div>
       </section>
 
-      {/* Category tabs */}
       <div className="sticky top-20 z-30 bg-are-ivory/95 backdrop-blur-sm border-b border-are-primary/10 py-4">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-2 overflow-x-auto scrollbar-hide">
             {menuCategories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
+              <button key={cat} onClick={() => setActiveCategory(cat)}
                 className={`font-label text-xs font-semibold tracking-wider px-5 py-2.5 rounded-full whitespace-nowrap transition-all duration-300 ${
-                  activeCategory === cat
-                    ? 'bg-are-primary text-are-ivory'
-                    : 'bg-are-primary/5 text-are-primary/60 hover:bg-are-primary/10'
-                }`}
-              >
+                  activeCategory === cat ? 'bg-are-primary text-are-ivory' : 'bg-are-primary/5 text-are-primary/60 hover:bg-are-primary/10'
+                }`}>
                 {cat}
               </button>
             ))}
@@ -69,7 +64,6 @@ export default function Menu() {
         </div>
       </div>
 
-      {/* Menu items */}
       <section className="py-16 bg-are-ivory">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {loading ? (
@@ -107,19 +101,13 @@ function MenuItemCard({
   item: MenuItem;
   onAdd: (item: MenuItem, size: string | null, unitPrice: number) => void;
 }) {
-  const sizes = item.sizes;
-  const defaultSize = sizes && sizes.length > 0 ? sizes[0].label : null;
-  const defaultPrice = sizes && sizes.length > 0 ? sizes[0].price : item.price;
+  const sizes = item.sizes_available;
+  const defaultSize = sizes && sizes.length > 0 ? sizes[0] : null;
+  const defaultPrice = getPriceForSize(item, defaultSize);
   const [selectedSize, setSelectedSize] = useState<string | null>(defaultSize);
   const [quantity, setQuantity] = useState(1);
 
-  const currentPrice = useMemo(() => {
-    if (sizes) {
-      const match = sizes.find((s) => s.label === selectedSize);
-      return match ? match.price : sizes[0].price;
-    }
-    return item.price;
-  }, [sizes, selectedSize, item.price]);
+  const currentPrice = getPriceForSize(item, selectedSize);
 
   const handleAdd = () => {
     onAdd(item, selectedSize, currentPrice ?? 0);
@@ -128,11 +116,12 @@ function MenuItemCard({
 
   return (
     <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-are-primary/5 overflow-hidden flex flex-col">
-      {/* Photo placeholder */}
       <div className="aspect-[4/3] bg-gradient-to-br from-are-primary/5 to-are-gold/5 flex items-center justify-center relative">
-        <span className="text-are-primary/20 font-label text-xs tracking-wider text-center px-4">
-          [Photo: {item.name}]
-        </span>
+        {item.image_url ? (
+          <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+        ) : (
+          <span className="text-are-primary/20 font-label text-xs tracking-wider text-center px-4">[Photo: {item.name}]</span>
+        )}
         {item.featured && (
           <span className="absolute top-3 left-3 flex items-center gap-1 bg-are-gold text-are-black text-[10px] font-label font-bold px-2.5 py-1 rounded-full">
             <Star className="w-3 h-3 fill-are-black" /> Featured
@@ -148,74 +137,56 @@ function MenuItemCard({
       <div className="p-5 flex flex-col flex-1">
         <h3 className="font-heading text-lg font-semibold text-are-primary mb-2">{item.name}</h3>
 
-        {/* Pairs well with */}
-        {item.pairs && item.pairs.length > 0 && (
+        {item.pairs_with && item.pairs_with.length > 0 && (
           <div className="mb-3">
             <p className="text-[10px] font-label tracking-wider text-are-primary/40 mb-1.5">Pairs well with:</p>
             <div className="flex flex-wrap gap-1.5">
-              {item.pairs.map((pair) => (
-                <span key={pair} className="text-[10px] bg-are-primary/5 text-are-primary/50 px-2 py-1 rounded-full">
-                  {pair}
-                </span>
+              {item.pairs_with.map((pair) => (
+                <span key={pair} className="text-[10px] bg-are-primary/5 text-are-primary/50 px-2 py-1 rounded-full">{pair}</span>
               ))}
             </div>
           </div>
         )}
 
-        {/* Size selector */}
         {sizes && sizes.length > 0 && (
           <div className="mb-3">
             <div className="flex gap-2">
               {sizes.map((size) => (
-                <button
-                  key={size.label}
-                  onClick={() => setSelectedSize(size.label)}
+                <button key={size} onClick={() => setSelectedSize(size)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                    selectedSize === size.label
-                      ? 'bg-are-gold text-are-black'
-                      : 'bg-are-primary/5 text-are-primary/60 hover:bg-are-primary/10'
-                  }`}
-                >
-                  {size.label}
+                    selectedSize === size ? 'bg-are-gold text-are-black' : 'bg-are-primary/5 text-are-primary/60 hover:bg-are-primary/10'
+                  }`}>
+                  {size}
                 </button>
               ))}
             </div>
           </div>
         )}
 
-        {/* Price */}
         <div className="mb-3">
-          {currentPrice !== null && currentPrice !== undefined ? (
+          {currentPrice !== null ? (
             <span className="font-heading text-2xl font-bold text-are-gold">€{currentPrice.toFixed(2)}</span>
           ) : (
             <span className="font-heading text-lg italic text-are-primary/50">Price on request</span>
           )}
         </div>
 
-        {/* Quantity selector */}
         <div className="flex items-center gap-3 mb-4">
-          <button
-            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+          <button onClick={() => setQuantity((q) => Math.max(1, q - 1))}
             className="w-9 h-9 rounded-full bg-are-primary/10 hover:bg-are-primary/20 flex items-center justify-center transition-colors"
-            aria-label="Decrease quantity"
-          >
+            aria-label="Decrease quantity">
             <Minus className="w-4 h-4 text-are-primary" />
           </button>
           <span className="font-label text-base font-semibold w-8 text-center">{quantity}</span>
-          <button
-            onClick={() => setQuantity((q) => q + 1)}
+          <button onClick={() => setQuantity((q) => q + 1)}
             className="w-9 h-9 rounded-full bg-are-primary/10 hover:bg-are-primary/20 flex items-center justify-center transition-colors"
-            aria-label="Increase quantity"
-          >
+            aria-label="Increase quantity">
             <Plus className="w-4 h-4 text-are-primary" />
           </button>
         </div>
 
-        {/* Add to cart */}
-        <button
-          onClick={handleAdd}
-          className="mt-auto w-full bg-[#B9472E] hover:bg-[#B9472E]/90 text-are-ivory font-label text-sm font-semibold tracking-wider py-3 rounded-full transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
-        >
+        <button onClick={handleAdd}
+          className="mt-auto w-full bg-[#B9472E] hover:bg-[#B9472E]/90 text-are-ivory font-label text-sm font-semibold tracking-wider py-3 rounded-full transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2">
           <Plus className="w-4 h-4" /> Add to Cart
         </button>
       </div>

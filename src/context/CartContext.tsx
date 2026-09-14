@@ -23,7 +23,7 @@ interface CartContextType {
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 function cartIdFor(item: MenuItem, size: string | null): string {
-  return size ? `${item.id}__${size}` : item.id;
+  return size ? `${item.id}__${size}` : String(item.id);
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -39,7 +39,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           i.id === cartId ? { ...i, quantity: i.quantity + 1 } : i
         );
       }
-      return [...prev, { ...item, id: cartId, quantity: 1, selectedSize: size, unitPrice }];
+      return [...prev, { ...item, id: item.id, quantity: 1, selectedSize: size, unitPrice }];
     });
     setIsOpen(true);
   }, []);

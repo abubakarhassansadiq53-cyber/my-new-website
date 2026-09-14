@@ -23,18 +23,12 @@ export default function CartDrawer() {
   return (
     <>
       <div
-        className={`fixed inset-0 bg-are-black/60 z-[70] transition-opacity duration-300 ${
-          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-        }`}
+        className={`fixed inset-0 bg-are-black/60 z-[70] transition-opacity duration-300 ${isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
         onClick={closeCart}
       />
-
       <div
-        className={`fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#321B29] z-[80] shadow-2xl transition-transform duration-300 flex flex-col ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        }`}
+        className={`fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#321B29] z-[80] shadow-2xl transition-transform duration-300 flex flex-col ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        {/* Header */}
         <div className="px-6 py-5 flex items-center justify-between border-b border-are-ivory/10">
           <h3 className="font-heading text-xl font-bold text-are-gold">Your Order</h3>
           <button onClick={closeCart} className="text-are-ivory/60 hover:text-are-gold transition-colors" aria-label="Close cart">
@@ -42,7 +36,6 @@ export default function CartDrawer() {
           </button>
         </div>
 
-        {/* Items */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
@@ -58,31 +51,17 @@ export default function CartDrawer() {
                 <div key={item.id} className="flex gap-3 pb-4 border-b border-are-ivory/10">
                   <div className="flex-1">
                     <h4 className="font-heading text-base text-are-ivory font-semibold">{item.name}</h4>
-                    {item.selectedSize && (
-                      <p className="text-xs text-are-gold/70 mb-1">Size: {item.selectedSize}</p>
-                    )}
+                    {item.selectedSize && <p className="text-xs text-are-gold/70 mb-1">Size: {item.selectedSize}</p>}
                     <p className="text-xs text-are-ivory/40 mb-2">€{item.unitPrice.toFixed(2)} each</p>
                     <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => updateQuantity(item.id, -1)}
-                        className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors"
-                        aria-label={`Decrease ${item.name}`}
-                      >
+                      <button onClick={() => updateQuantity(String(item.id), -1)} className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors" aria-label={`Decrease ${item.name}`}>
                         <Minus className="w-3.5 h-3.5 text-are-ivory" />
                       </button>
                       <span className="font-label text-sm font-semibold w-6 text-center text-are-ivory">{item.quantity}</span>
-                      <button
-                        onClick={() => updateQuantity(item.id, 1)}
-                        className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors"
-                        aria-label={`Increase ${item.name}`}
-                      >
+                      <button onClick={() => updateQuantity(String(item.id), 1)} className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors" aria-label={`Increase ${item.name}`}>
                         <Plus className="w-3.5 h-3.5 text-are-ivory" />
                       </button>
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="ml-auto text-are-paprika hover:text-are-paprika/70 transition-colors"
-                        aria-label={`Remove ${item.name}`}
-                      >
+                      <button onClick={() => removeItem(String(item.id))} className="ml-auto text-are-paprika hover:text-are-paprika/70 transition-colors" aria-label={`Remove ${item.name}`}>
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
@@ -96,76 +75,45 @@ export default function CartDrawer() {
           )}
         </div>
 
-        {/* Footer */}
         {items.length > 0 && (
           <div className="border-t border-are-ivory/10 px-6 py-5 bg-[#321B29]">
-            {/* Notes */}
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={2}
+            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2}
               className="w-full bg-are-ivory/5 text-are-ivory placeholder:text-are-ivory/30 text-sm rounded-xl px-4 py-3 resize-none border border-are-ivory/10 focus:border-are-gold focus:outline-none transition-colors mb-4"
-              placeholder="Special requests or dietary requirements?"
-            />
+              placeholder="Special requests or dietary requirements?" />
 
-            {/* Total */}
             <div className="flex items-center justify-between mb-4">
               <span className="font-label text-sm text-are-ivory/70">Order total</span>
               <span className="font-heading text-2xl font-bold text-are-gold">€{totalPrice.toFixed(2)}</span>
             </div>
 
-            {/* WhatsApp checkout */}
-            <button
-              onClick={handleWhatsAppOrder}
-              className="w-full bg-[#25D366] hover:bg-[#1da851] text-white font-label text-sm font-semibold tracking-wider py-3.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2 mb-2"
-            >
-              <MessageCircle className="w-5 h-5" fill="currentColor" />
-              Order via WhatsApp
+            <button onClick={handleWhatsAppOrder}
+              className="w-full bg-[#25D366] hover:bg-[#1da851] text-white font-label text-sm font-semibold tracking-wider py-3.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2 mb-2">
+              <MessageCircle className="w-5 h-5" fill="currentColor" /> Order via WhatsApp
             </button>
 
-            {/* Email checkout */}
-            <button
-              onClick={() => setEmailModalOpen(true)}
-              className="w-full bg-[#B9472E] hover:bg-[#B9472E]/90 text-are-ivory font-label text-sm font-semibold tracking-wider py-3.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2 mb-2"
-            >
-              <Mail className="w-5 h-5" />
-              Order via Email
+            <button onClick={() => setEmailModalOpen(true)}
+              className="w-full bg-[#B9472E] hover:bg-[#B9472E]/90 text-are-ivory font-label text-sm font-semibold tracking-wider py-3.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2 mb-2">
+              <Mail className="w-5 h-5" /> Order via Email
             </button>
 
-            <button
-              onClick={clearCart}
-              className="w-full text-are-ivory/40 hover:text-are-paprika text-xs font-label transition-colors py-2"
-            >
+            <button onClick={clearCart} className="w-full text-are-ivory/40 hover:text-are-paprika text-xs font-label transition-colors py-2">
               Clear cart
             </button>
           </div>
         )}
       </div>
 
-      {/* Email checkout modal */}
       {emailModalOpen && (
-        <EmailCheckoutModal
-          items={items}
-          total={totalPrice}
-          notes={notes}
+        <EmailCheckoutModal items={items} total={totalPrice} notes={notes}
           onClose={() => setEmailModalOpen(false)}
-          onSuccess={() => {
-            clearCart();
-            setNotes('');
-            setEmailModalOpen(false);
-          }}
-        />
+          onSuccess={() => { clearCart(); setNotes(''); setEmailModalOpen(false); }} />
       )}
     </>
   );
 }
 
 function EmailCheckoutModal({
-  items,
-  total,
-  notes,
-  onClose,
-  onSuccess,
+  items, total, notes, onClose, onSuccess,
 }: {
   items: ReturnType<typeof useCart>['items'];
   total: number;
@@ -197,19 +145,19 @@ function EmailCheckoutModal({
 
     try {
       const { error } = await supabase.from('orders').insert({
-        full_name: fullName,
-        phone,
-        email,
+        customer_name: fullName,
+        customer_phone: phone,
+        customer_email: email,
         order_type: orderType,
         delivery_address: orderType === 'Delivery' ? deliveryAddress : null,
         preferred_datetime: preferredDateTime || null,
-        items: orderItems,
-        total,
+        order_items: orderItems,
+        order_total: total,
         special_requests: specialRequests || null,
+        status: 'new',
       });
 
       if (error) throw error;
-
       setStatus('success');
       setTimeout(onSuccess, 4000);
     } catch (err) {
@@ -226,9 +174,7 @@ function EmailCheckoutModal({
             <CheckCircle2 className="w-8 h-8 text-are-gold" />
           </div>
           <h3 className="font-heading text-2xl font-bold text-are-primary mb-2">Order Received!</h3>
-          <p className="text-are-primary/60 text-sm">
-            Thank you {fullName}! Check your email for confirmation. Tastes Heavenly awaits!
-          </p>
+          <p className="text-are-primary/60 text-sm">Thank you {fullName}! Check your email for confirmation. Tastes Heavenly awaits!</p>
         </div>
       </div>
     );
@@ -236,10 +182,7 @@ function EmailCheckoutModal({
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center bg-are-black/70 px-4 py-8 overflow-y-auto" onClick={onClose}>
-      <div
-        className="bg-are-ivory rounded-2xl p-6 sm:p-8 max-w-lg w-full my-auto max-h-[90vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="bg-are-ivory rounded-2xl p-6 sm:p-8 max-w-lg w-full my-auto max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-6">
           <h3 className="font-heading text-2xl font-bold text-are-primary">Confirm Your Order</h3>
           <button onClick={onClose} className="text-are-primary/40 hover:text-are-primary transition-colors" aria-label="Close">
@@ -271,19 +214,12 @@ function EmailCheckoutModal({
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="form-input" placeholder="you@example.com" />
           </FormField>
 
-          {/* Order type toggle */}
           <div>
             <label className="block font-label text-[10px] tracking-wider text-are-primary/60 mb-2">Order type</label>
             <div className="grid grid-cols-3 gap-2">
               {(['Dine In', 'Collection', 'Delivery'] as OrderType[]).map((type) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setOrderType(type)}
-                  className={`px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
-                    orderType === type ? 'bg-are-gold text-are-black' : 'bg-are-primary/5 text-are-primary/60 hover:bg-are-primary/10'
-                  }`}
-                >
+                <button key={type} type="button" onClick={() => setOrderType(type)}
+                  className={`px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${orderType === type ? 'bg-are-gold text-are-black' : 'bg-are-primary/5 text-are-primary/60 hover:bg-are-primary/10'}`}>
                   {type}
                 </button>
               ))}
@@ -304,7 +240,6 @@ function EmailCheckoutModal({
             <textarea value={specialRequests} onChange={(e) => setSpecialRequests(e.target.value)} rows={2} className="form-input resize-none" placeholder="Any dietary requirements, allergies, etc." />
           </FormField>
 
-          {/* Order summary */}
           <div className="bg-are-primary/5 rounded-xl p-4">
             <p className="font-label text-[10px] tracking-wider text-are-primary/50 mb-2">Order summary</p>
             <div className="space-y-1">
@@ -321,11 +256,8 @@ function EmailCheckoutModal({
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={status === 'submitting'}
-            className="w-full bg-are-gold hover:bg-are-gold/90 text-are-black font-label text-sm font-semibold tracking-wider py-4 rounded-full transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
+          <button type="submit" disabled={status === 'submitting'}
+            className="w-full bg-are-gold hover:bg-are-gold/90 text-are-black font-label text-sm font-semibold tracking-wider py-4 rounded-full transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed">
             {status === 'submitting' ? 'Submitting...' : 'Confirm My Order'}
           </button>
         </form>

@@ -1,19 +1,14 @@
-export interface SizeOption {
-  label: string;
-  price: number;
-}
-
 export interface MenuItem {
-  id: string;
+  id: number;
   name: string;
-  description: string | null;
   category: string;
-  sizes: SizeOption[] | null;
+  sizes_available: string[] | null;
+  pairs_with: string[] | null;
   price: number | null;
-  pairs: string[] | null;
+  image_url: string | null;
+  available: boolean;
   featured: boolean;
   moq_required: boolean;
-  available: boolean;
   sort_order: number;
 }
 
