@@ -46,7 +46,7 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-20">
             <Link to="/" className="flex items-center group" aria-label="African Restaurant Estonia home">
               <img
-                src="/ares-logo.png"
+                src="https://imgur.com/a/C1dlMDo"
                 alt="African Restaurant Estonia"
                 className="h-12 w-auto max-w-[190px] rounded-md object-contain transition-transform duration-300 group-hover:scale-[1.03]"
               />
