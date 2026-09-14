@@ -16,8 +16,8 @@ export const site = {
 
 export const heroSlides = [
   {
-    image: 'https://images.pexels.com/photos/28059309/pexels-photo-28059309.jpeg?auto=compress&cs=tinysrgb&w=1920',
-    label: '[Upload: African restaurant interior warm candlelit]',
+    image: 'https://images.pexels.com/photos/36874373/pexels-photo-36874373.jpeg?auto=compress&cs=tinysrgb&w=1920',
+    label: '[Upload: Traditional African kitchen cooking over open fire]',
     headline: 'A Taste of West Africa,\nRight Here.',
     subtext: 'Authentic Nigerian and West African cuisine made with love, served fresh in Tallinn.',
     buttons: [
@@ -65,11 +65,11 @@ export const heroSlides = [
 
 export const galleryImages = [
   { src: 'https://images.pexels.com/photos/13915043/pexels-photo-13915043.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Jollof Rice steaming]', alt: 'Jollof rice with grilled chicken' },
-  { src: 'https://images.pexels.com/photos/28059309/pexels-photo-28059309.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Restaurant interior]', alt: 'Restaurant interior with candlelight' },
+  { src: 'https://images.pexels.com/photos/36874369/pexels-photo-36874369.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Nigerian home cooking]', alt: 'Traditional Nigerian outdoor cooking' },
   { src: 'https://images.pexels.com/photos/6426069/pexels-photo-6426069.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Soup plated]', alt: 'Steaming hot soup' },
   { src: 'https://images.pexels.com/photos/36886535/pexels-photo-36886535.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Plantain closeup]', alt: 'Fried plantains' },
   { src: 'https://images.pexels.com/photos/4267557/pexels-photo-4267557.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Group dining]', alt: 'Diverse group of friends dining together' },
-  { src: 'https://images.pexels.com/photos/4253300/pexels-photo-4253300.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Chef cooking]', alt: 'Chefs cooking in kitchen' },
+  { src: 'https://images.pexels.com/photos/33618534/pexels-photo-33618534.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Nigerian chef]', alt: 'Nigerian chef cooking in kitchen' },
   { src: 'https://images.pexels.com/photos/37100094/pexels-photo-37100094.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Food platter]', alt: 'African food platter' },
   { src: 'https://images.pexels.com/photos/36756598/pexels-photo-36756598.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Pounded Yam Soup]', alt: 'Grilled yams' },
   { src: 'https://images.pexels.com/photos/30591630/pexels-photo-30591630.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Drinks]', alt: 'Refreshing citrus cocktail' },

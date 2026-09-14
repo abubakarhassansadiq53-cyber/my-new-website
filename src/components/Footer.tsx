@@ -21,7 +21,7 @@ export default function Footer() {
             <img
               src="/ARE'S_LOGO.png"
               alt="African Restaurant Estonia"
-              className="w-full max-w-[250px] rounded-md object-contain mb-5"
+              className="w-full max-w-[380px] rounded-md object-contain mb-5"
             />
             <p className="font-heading italic text-are-gold/80 text-lg mb-4">"{site.tagline}"</p>
             <div className="flex gap-3">
