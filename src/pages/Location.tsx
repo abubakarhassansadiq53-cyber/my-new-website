@@ -1,21 +1,53 @@
+import { useState, useEffect } from 'react';
 import { MapPin, Clock, Phone, Smartphone, Mail, Instagram, MessageCircle, Navigation } from 'lucide-react';
 import Reveal from '@/components/Reveal';
 import SectionTitle from '@/components/SectionTitle';
 import { site } from '@/data/site';
+import { supabase } from '@/lib/supabase';
 
-const contactItems = [
-  { icon: MapPin, label: 'Address', value: site.address },
-  { icon: Clock, label: 'Opening Hours', value: 'Open daily 08:00 – 23:45' },
-  { icon: Phone, label: 'Phone', value: site.phone, href: `tel:${site.phoneRaw}` },
-  { icon: Smartphone, label: 'Mobile', value: site.phone, href: `tel:${site.phoneRaw}` },
-  { icon: Mail, label: 'Email', value: site.email, href: `mailto:${site.email}` },
-  { icon: Instagram, label: 'Instagram', value: site.instagramHandle, href: site.instagram },
-];
+interface DayHours { open: boolean; from: string; to: string; }
+
+const dayNames: Record<string, string> = {
+  monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday',
+  thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday',
+};
+
+const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 
 export default function Location() {
+  const [hours, setHours] = useState<Record<string, DayHours>>({});
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      const { data } = await supabase.from('settings').select('key, value').like('key', 'hours_%');
+      if (data) {
+        const hoursMap: Record<string, DayHours> = {};
+        for (const row of data) {
+          const day = row.key.replace('hours_', '');
+          try { hoursMap[day] = JSON.parse(row.value); } catch { /* skip */ }
+        }
+        setHours(hoursMap);
+      }
+      setLoading(false);
+    };
+    fetchSettings();
+  }, []);
+
+  const allOpen = !loading && Object.values(hours).every((h) => h?.open && h?.from === '08:00' && h?.to === '23:45');
+  const hoursLabel = allOpen ? 'Open daily 08:00 – 23:45' : 'See hours below';
+
+  const contactItems = [
+    { icon: MapPin, label: 'Address', value: site.address },
+    { icon: Clock, label: 'Opening Hours', value: hoursLabel },
+    { icon: Phone, label: 'Phone', value: site.phone, href: `tel:${site.phoneRaw}` },
+    { icon: Smartphone, label: 'Mobile', value: site.phone, href: `tel:${site.phoneRaw}` },
+    { icon: Mail, label: 'Email', value: site.email, href: `mailto:${site.email}` },
+    { icon: Instagram, label: 'Instagram', value: site.instagramHandle, href: site.instagram },
+  ];
+
   return (
     <div className="pt-20">
-      {/* Header */}
       <section className="bg-are-primary py-16 kente-overlay">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionTitle
@@ -28,11 +60,9 @@ export default function Location() {
         </div>
       </section>
 
-      {/* Content */}
       <section className="py-16 bg-are-ivory">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-2 gap-10">
-            {/* Left — contact info */}
             <Reveal>
               <div className="bg-white rounded-2xl p-8 shadow-sm border border-are-primary/5">
                 <h3 className="font-heading text-2xl font-bold text-are-primary mb-6">Contact Details</h3>
@@ -55,6 +85,26 @@ export default function Location() {
                     </div>
                   ))}
                 </div>
+
+                {!loading && !allOpen && (
+                  <div className="mt-6 pt-6 border-t border-are-primary/10">
+                    <h4 className="font-label text-xs tracking-wider text-are-gold mb-3">Detailed Hours</h4>
+                    <div className="space-y-2">
+                      {dayOrder.map((day) => {
+                        const h = hours[day];
+                        return (
+                          <div key={day} className="flex justify-between text-sm">
+                            <span className="text-are-primary/70 capitalize">{dayNames[day]}</span>
+                            <span className={h?.open ? 'text-are-primary' : 'text-are-primary/40'}>
+                              {h?.open ? `${h.from} – ${h.to}` : 'Closed'}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
                 <a
                   href={site.whatsapp}
                   target="_blank"
@@ -67,7 +117,6 @@ export default function Location() {
               </div>
             </Reveal>
 
-            {/* Right — map */}
             <Reveal delay={100}>
               <div className="bg-white rounded-2xl p-4 shadow-sm border border-are-primary/5 h-full flex flex-col">
                 <div className="flex-1 min-h-[300px] rounded-xl overflow-hidden">

@@ -82,3 +82,23 @@
 .form-input::placeholder {
   color: rgba(50, 27, 41, 0.35);
 }
+
+.admin-input {
+  width: 100%;
+  background: #151313;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.875rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.875rem;
+  color: white;
+  transition: all 0.2s;
+}
+.admin-input:focus {
+  outline: none;
+  border-color: #D89A27;
+  box-shadow: 0 0 0 3px rgba(216, 154, 39, 0.15);
+}
+.admin-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+}

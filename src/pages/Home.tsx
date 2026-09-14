@@ -23,6 +23,17 @@ const valueIcons: Record<string, React.ComponentType<{ className?: string }>> = 
   Heart,
 };
 
+const SIZE_PRICES: Record<string, number> = { Small: 8, Medium: 12, Large: 16 };
+
+function getDisplayPrice(item: MenuItem): number | null {
+  if (item.price !== null) return item.price;
+  if (item.sizes_available && item.sizes_available.length > 0) {
+    const firstSize = item.sizes_available[0];
+    return SIZE_PRICES[firstSize] ?? null;
+  }
+  return null;
+}
+
 export default function Home() {
   const { addItem } = useCart();
   const [featuredItems, setFeaturedItems] = useState<MenuItem[]>([]);
@@ -44,10 +55,8 @@ export default function Home() {
 
   return (
     <div>
-      {/* Hero */}
       <HeroCarousel />
 
-      {/* Badges strip */}
       <div className="bg-are-primary py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -63,7 +72,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Featured Menu */}
       <section className="py-20 bg-are-ivory">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
@@ -74,34 +82,37 @@ export default function Home() {
           />
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
             {featuredItems.map((item, i) => {
-              const displayPrice = item.sizes && item.sizes.length > 0 ? item.sizes[0].price : item.price;
+              const displayPrice = getDisplayPrice(item);
+              const firstSize = item.sizes_available && item.sizes_available.length > 0 ? item.sizes_available[0] : null;
               return (
                 <Reveal key={item.id} delay={i * 100}>
                   <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-are-primary/5 overflow-hidden flex flex-col h-full">
                     <div className="aspect-[4/3] bg-gradient-to-br from-are-primary/5 to-are-gold/5 flex items-center justify-center relative">
-                      <span className="text-are-primary/20 font-label text-xs tracking-wider text-center px-4">[Photo: {item.name}]</span>
+                      {item.image_url ? (
+                        <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-are-primary/20 font-label text-xs tracking-wider text-center px-4">[Photo: {item.name}]</span>
+                      )}
                       <span className="absolute top-3 left-3 flex items-center gap-1 bg-are-gold text-are-black text-[10px] font-label font-bold px-2.5 py-1 rounded-full">
                         <Star className="w-3 h-3 fill-are-black" /> Featured
                       </span>
                     </div>
                     <div className="p-5 flex flex-col flex-1">
                       <h3 className="font-heading text-lg font-semibold text-are-primary mb-1">{item.name}</h3>
-                      {item.description && (
-                        <p className="text-sm italic text-are-primary/50 mb-3">{item.description}</p>
+                      {item.pairs_with && item.pairs_with.length > 0 && (
+                        <p className="text-sm italic text-are-primary/50 mb-3">Pairs with: {item.pairs_with.slice(0, 3).join(', ')}</p>
                       )}
                       <div className="mt-auto">
                         <div className="flex items-center justify-between mb-3">
-                          {displayPrice !== null && displayPrice !== undefined ? (
+                          {displayPrice !== null ? (
                             <span className="font-heading text-xl font-bold text-are-gold">€{displayPrice.toFixed(2)}</span>
                           ) : (
                             <span className="font-heading text-sm italic text-are-primary/50">Price on request</span>
                           )}
-                          {item.sizes && item.sizes.length > 0 && (
-                            <span className="text-[10px] text-are-primary/40">from {item.sizes[0].label}</span>
-                          )}
+                          {firstSize && <span className="text-[10px] text-are-primary/40">from {firstSize}</span>}
                         </div>
                         <button
-                          onClick={() => addItem(item, item.sizes && item.sizes.length > 0 ? item.sizes[0].label : null, displayPrice ?? 0)}
+                          onClick={() => addItem(item, firstSize, displayPrice ?? 0)}
                           className="w-full bg-[#B9472E] hover:bg-[#B9472E]/90 text-are-ivory font-label text-xs font-semibold tracking-wider py-3 rounded-full transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
                         >
                           <Plus className="w-3.5 h-3.5" /> Add to Order
@@ -124,7 +135,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* About preview */}
       <section className="py-20 bg-are-primary kente-overlay relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -170,7 +180,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Gallery preview */}
       <section className="py-20 bg-are-ivory">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
@@ -207,7 +216,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="py-20 bg-are-paprika relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute -top-20 -left-20 w-60 h-60 rounded-full bg-are-gold blur-3xl" />
