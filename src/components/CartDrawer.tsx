@@ -1,41 +1,23 @@
 import { useState } from 'react';
-import { X, Plus, Minus, Trash2, MessageCircle, Truck, Store } from 'lucide-react';
+import { X, Plus, Minus, Trash2, MessageCircle, Mail, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { site } from '@/data/site';
+import { supabase } from '@/lib/supabase';
 
-type FulfilmentMethod = 'pickup' | 'delivery';
+type OrderType = 'Dine In' | 'Collection' | 'Delivery';
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, updateQuantity, removeItem, totalPrice, clearCart } = useCart();
-  const [orderSent, setOrderSent] = useState(false);
-  const [method, setMethod] = useState<FulfilmentMethod>('pickup');
-  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [notes, setNotes] = useState('');
+  const [emailModalOpen, setEmailModalOpen] = useState(false);
 
   const handleWhatsAppOrder = () => {
-    const orderText = items
-      .map((item) => `${item.quantity}x ${item.name} — €${(item.price * item.quantity).toFixed(2)}`)
-      .join('\n');
-    const fulfilment = method === 'delivery'
-      ? `Delivery\nAddress: ${deliveryAddress || 'Address to be confirmed on WhatsApp'}`
-      : 'Pick-up from Nelgi tn 29, Tallinn';
-    const message = [
-      'Hello ARE, I would like to place an order.',
-      '',
-      orderText,
-      '',
-      `Total: €${totalPrice.toFixed(2)}`,
-      fulfilment,
-      '',
-      'Thank you!',
-    ].join('\n');
-
+    const orderLines = items.map(
+      (i) => `${i.quantity}x ${i.name}${i.selectedSize ? ` (${i.selectedSize})` : ''} — €${(i.unitPrice * i.quantity).toFixed(2)}`
+    );
+    const message =
+      `Hi African Restaurant Estonia!\n\nI'd like to place an order:\n\n${orderLines.join('\n')}\n\nOrder Total: €${totalPrice.toFixed(2)}\nSpecial requests: ${notes || 'None'}\n\nPlease confirm. Thank you!`;
     window.open(`${site.whatsapp}?text=${encodeURIComponent(message)}`, '_blank');
-    setOrderSent(true);
-    setTimeout(() => {
-      setOrderSent(false);
-      clearCart();
-      closeCart();
-    }, 2000);
   };
 
   return (
@@ -48,51 +30,65 @@ export default function CartDrawer() {
       />
 
       <div
-        className={`fixed top-0 right-0 bottom-0 w-full max-w-md bg-are-ivory z-[80] shadow-2xl transition-transform duration-300 flex flex-col ${
+        className={`fixed top-0 right-0 bottom-0 w-full max-w-md bg-[#321B29] z-[80] shadow-2xl transition-transform duration-300 flex flex-col ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="bg-are-primary text-are-ivory px-6 py-5 flex items-center justify-between">
-          <div>
-            <h3 className="font-heading text-xl font-bold">Your Order</h3>
-            <p className="text-are-ivory/60 text-xs mt-1">Choose pickup or delivery below.</p>
-          </div>
-          <button onClick={closeCart} className="text-are-ivory/70 hover:text-are-gold transition-colors" aria-label="Close cart">
+        {/* Header */}
+        <div className="px-6 py-5 flex items-center justify-between border-b border-are-ivory/10">
+          <h3 className="font-heading text-xl font-bold text-are-gold">Your Order</h3>
+          <button onClick={closeCart} className="text-are-ivory/60 hover:text-are-gold transition-colors" aria-label="Close cart">
             <X className="w-5 h-5" />
           </button>
         </div>
 
+        {/* Items */}
         <div className="flex-1 overflow-y-auto px-6 py-4">
           {items.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <div className="w-20 h-20 rounded-full bg-are-primary/10 flex items-center justify-center mb-4">
-                <Store className="w-8 h-8 text-are-primary/40" />
+              <div className="w-20 h-20 rounded-full bg-are-ivory/5 flex items-center justify-center mb-4">
+                <MessageCircle className="w-8 h-8 text-are-ivory/30" />
               </div>
-              <p className="font-heading text-lg text-are-primary mb-2">Your cart is empty</p>
-              <p className="text-sm text-are-primary/60">Browse the menu and add your favourite dishes.</p>
+              <p className="font-heading text-lg text-are-ivory mb-2">Your cart is empty</p>
+              <p className="text-sm text-are-ivory/50">Browse the menu and add your favourite dishes.</p>
             </div>
           ) : (
             <div className="space-y-4">
               {items.map((item) => (
-                <div key={item.id} className="flex gap-3 pb-4 border-b border-are-primary/10">
+                <div key={item.id} className="flex gap-3 pb-4 border-b border-are-ivory/10">
                   <div className="flex-1">
-                    <h4 className="font-heading text-base text-are-primary font-semibold">{item.name}</h4>
-                    <p className="text-xs text-are-primary/60 mb-2">€{item.price.toFixed(2)} each</p>
+                    <h4 className="font-heading text-base text-are-ivory font-semibold">{item.name}</h4>
+                    {item.selectedSize && (
+                      <p className="text-xs text-are-gold/70 mb-1">Size: {item.selectedSize}</p>
+                    )}
+                    <p className="text-xs text-are-ivory/40 mb-2">€{item.unitPrice.toFixed(2)} each</p>
                     <div className="flex items-center gap-3">
-                      <button onClick={() => updateQuantity(item.id, -1)} className="w-7 h-7 rounded-full bg-are-primary/10 hover:bg-are-primary/20 flex items-center justify-center transition-colors" aria-label={`Decrease ${item.name}`}>
-                        <Minus className="w-3.5 h-3.5 text-are-primary" />
+                      <button
+                        onClick={() => updateQuantity(item.id, -1)}
+                        className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors"
+                        aria-label={`Decrease ${item.name}`}
+                      >
+                        <Minus className="w-3.5 h-3.5 text-are-ivory" />
                       </button>
-                      <span className="font-label text-sm font-semibold w-6 text-center">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, 1)} className="w-7 h-7 rounded-full bg-are-primary/10 hover:bg-are-primary/20 flex items-center justify-center transition-colors" aria-label={`Increase ${item.name}`}>
-                        <Plus className="w-3.5 h-3.5 text-are-primary" />
+                      <span className="font-label text-sm font-semibold w-6 text-center text-are-ivory">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.id, 1)}
+                        className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors"
+                        aria-label={`Increase ${item.name}`}
+                      >
+                        <Plus className="w-3.5 h-3.5 text-are-ivory" />
                       </button>
-                      <button onClick={() => removeItem(item.id)} className="ml-auto text-are-paprika hover:text-are-paprika/70 transition-colors" aria-label={`Remove ${item.name}`}>
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="ml-auto text-are-paprika hover:text-are-paprika/70 transition-colors"
+                        aria-label={`Remove ${item.name}`}
+                      >
                         <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-heading text-base font-bold text-are-gold">€{(item.price * item.quantity).toFixed(2)}</p>
+                    <p className="font-heading text-base font-bold text-are-gold">€{(item.unitPrice * item.quantity).toFixed(2)}</p>
                   </div>
                 </div>
               ))}
@@ -100,52 +96,251 @@ export default function CartDrawer() {
           )}
         </div>
 
+        {/* Footer */}
         {items.length > 0 && (
-          <div className="border-t border-are-primary/10 px-6 py-5 bg-are-ivory">
-            <p className="font-label text-[10px] tracking-wider text-are-primary/60 mb-3">Fulfilment method</p>
-            <div className="grid grid-cols-2 gap-3 mb-3">
-              <button
-                onClick={() => setMethod('pickup')}
-                className={`rounded-xl border px-3 py-3 flex items-center gap-2 text-left transition-colors ${method === 'pickup' ? 'border-are-gold bg-are-gold/10 text-are-primary' : 'border-are-primary/15 text-are-primary/60'}`}
-              >
-                <Store className="w-4 h-4 shrink-0" />
-                <span className="text-xs font-semibold">Pick up</span>
-              </button>
-              <button
-                onClick={() => setMethod('delivery')}
-                className={`rounded-xl border px-3 py-3 flex items-center gap-2 text-left transition-colors ${method === 'delivery' ? 'border-are-gold bg-are-gold/10 text-are-primary' : 'border-are-primary/15 text-are-primary/60'}`}
-              >
-                <Truck className="w-4 h-4 shrink-0" />
-                <span className="text-xs font-semibold">Delivery</span>
-              </button>
-            </div>
-            {method === 'delivery' && (
-              <input
-                value={deliveryAddress}
-                onChange={(event) => setDeliveryAddress(event.target.value)}
-                className="form-input mb-4"
-                placeholder="Delivery address"
-                aria-label="Delivery address"
-              />
-            )}
+          <div className="border-t border-are-ivory/10 px-6 py-5 bg-[#321B29]">
+            {/* Notes */}
+            <textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              rows={2}
+              className="w-full bg-are-ivory/5 text-are-ivory placeholder:text-are-ivory/30 text-sm rounded-xl px-4 py-3 resize-none border border-are-ivory/10 focus:border-are-gold focus:outline-none transition-colors mb-4"
+              placeholder="Special requests or dietary requirements?"
+            />
+
+            {/* Total */}
             <div className="flex items-center justify-between mb-4">
-              <span className="font-label text-sm text-are-primary/70">Food total</span>
-              <span className="font-heading text-2xl font-bold text-are-primary">€{totalPrice.toFixed(2)}</span>
+              <span className="font-label text-sm text-are-ivory/70">Order total</span>
+              <span className="font-heading text-2xl font-bold text-are-gold">€{totalPrice.toFixed(2)}</span>
             </div>
+
+            {/* WhatsApp checkout */}
             <button
               onClick={handleWhatsAppOrder}
-              disabled={orderSent || (method === 'delivery' && !deliveryAddress.trim())}
-              className="w-full bg-[#25D366] hover:bg-[#1da851] text-white font-label text-sm font-semibold tracking-wider py-3.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full bg-[#25D366] hover:bg-[#1da851] text-white font-label text-sm font-semibold tracking-wider py-3.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2 mb-2"
             >
               <MessageCircle className="w-5 h-5" fill="currentColor" />
-              {orderSent ? 'Opening WhatsApp...' : 'Send Order via WhatsApp'}
+              Order via WhatsApp
             </button>
-            <button onClick={clearCart} className="w-full mt-2 text-are-primary/50 hover:text-are-paprika text-xs font-label transition-colors py-2">
+
+            {/* Email checkout */}
+            <button
+              onClick={() => setEmailModalOpen(true)}
+              className="w-full bg-[#B9472E] hover:bg-[#B9472E]/90 text-are-ivory font-label text-sm font-semibold tracking-wider py-3.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2 mb-2"
+            >
+              <Mail className="w-5 h-5" />
+              Order via Email
+            </button>
+
+            <button
+              onClick={clearCart}
+              className="w-full text-are-ivory/40 hover:text-are-paprika text-xs font-label transition-colors py-2"
+            >
               Clear cart
             </button>
           </div>
         )}
       </div>
+
+      {/* Email checkout modal */}
+      {emailModalOpen && (
+        <EmailCheckoutModal
+          items={items}
+          total={totalPrice}
+          notes={notes}
+          onClose={() => setEmailModalOpen(false)}
+          onSuccess={() => {
+            clearCart();
+            setNotes('');
+            setEmailModalOpen(false);
+          }}
+        />
+      )}
     </>
+  );
+}
+
+function EmailCheckoutModal({
+  items,
+  total,
+  notes,
+  onClose,
+  onSuccess,
+}: {
+  items: ReturnType<typeof useCart>['items'];
+  total: number;
+  notes: string;
+  onClose: () => void;
+  onSuccess: () => void;
+}) {
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [orderType, setOrderType] = useState<OrderType>('Collection');
+  const [deliveryAddress, setDeliveryAddress] = useState('');
+  const [preferredDateTime, setPreferredDateTime] = useState('');
+  const [specialRequests, setSpecialRequests] = useState(notes);
+  const [status, setStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setStatus('submitting');
+    setErrorMsg('');
+
+    const orderItems = items.map((i) => ({
+      name: i.name,
+      size: i.selectedSize,
+      quantity: i.quantity,
+      price: i.unitPrice,
+    }));
+
+    try {
+      const { error } = await supabase.from('orders').insert({
+        full_name: fullName,
+        phone,
+        email,
+        order_type: orderType,
+        delivery_address: orderType === 'Delivery' ? deliveryAddress : null,
+        preferred_datetime: preferredDateTime || null,
+        items: orderItems,
+        total,
+        special_requests: specialRequests || null,
+      });
+
+      if (error) throw error;
+
+      setStatus('success');
+      setTimeout(onSuccess, 4000);
+    } catch (err) {
+      setStatus('error');
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+    }
+  };
+
+  if (status === 'success') {
+    return (
+      <div className="fixed inset-0 z-[90] flex items-center justify-center bg-are-black/70 px-4" onClick={onSuccess}>
+        <div className="bg-are-ivory rounded-2xl p-8 max-w-md w-full text-center" onClick={(e) => e.stopPropagation()}>
+          <div className="w-16 h-16 rounded-full bg-are-gold/15 flex items-center justify-center mx-auto mb-5">
+            <CheckCircle2 className="w-8 h-8 text-are-gold" />
+          </div>
+          <h3 className="font-heading text-2xl font-bold text-are-primary mb-2">Order Received!</h3>
+          <p className="text-are-primary/60 text-sm">
+            Thank you {fullName}! Check your email for confirmation. Tastes Heavenly awaits!
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 z-[90] flex items-center justify-center bg-are-black/70 px-4 py-8 overflow-y-auto" onClick={onClose}>
+      <div
+        className="bg-are-ivory rounded-2xl p-6 sm:p-8 max-w-lg w-full my-auto max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="font-heading text-2xl font-bold text-are-primary">Confirm Your Order</h3>
+          <button onClick={onClose} className="text-are-primary/40 hover:text-are-primary transition-colors" aria-label="Close">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {status === 'error' && (
+          <div className="bg-are-paprika/10 border border-are-paprika/20 rounded-xl p-4 flex gap-3 mb-4">
+            <AlertCircle className="w-5 h-5 text-are-paprika shrink-0 mt-0.5" />
+            <div>
+              <p className="text-are-paprika text-sm font-semibold">Couldn't submit order</p>
+              <p className="text-are-paprika/80 text-xs mt-1">{errorMsg}</p>
+            </div>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid sm:grid-cols-2 gap-4">
+            <FormField label="Full Name" required>
+              <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} required className="form-input" placeholder="Your name" />
+            </FormField>
+            <FormField label="Phone" required>
+              <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required className="form-input" placeholder="+372 ..." />
+            </FormField>
+          </div>
+
+          <FormField label="Email" required>
+            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className="form-input" placeholder="you@example.com" />
+          </FormField>
+
+          {/* Order type toggle */}
+          <div>
+            <label className="block font-label text-[10px] tracking-wider text-are-primary/60 mb-2">Order type</label>
+            <div className="grid grid-cols-3 gap-2">
+              {(['Dine In', 'Collection', 'Delivery'] as OrderType[]).map((type) => (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => setOrderType(type)}
+                  className={`px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
+                    orderType === type ? 'bg-are-gold text-are-black' : 'bg-are-primary/5 text-are-primary/60 hover:bg-are-primary/10'
+                  }`}
+                >
+                  {type}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {orderType === 'Delivery' && (
+            <FormField label="Delivery address" required>
+              <input type="text" value={deliveryAddress} onChange={(e) => setDeliveryAddress(e.target.value)} required className="form-input" placeholder="Street, city" />
+            </FormField>
+          )}
+
+          <FormField label="Preferred date & time">
+            <input type="datetime-local" value={preferredDateTime} onChange={(e) => setPreferredDateTime(e.target.value)} className="form-input" />
+          </FormField>
+
+          <FormField label="Special requests">
+            <textarea value={specialRequests} onChange={(e) => setSpecialRequests(e.target.value)} rows={2} className="form-input resize-none" placeholder="Any dietary requirements, allergies, etc." />
+          </FormField>
+
+          {/* Order summary */}
+          <div className="bg-are-primary/5 rounded-xl p-4">
+            <p className="font-label text-[10px] tracking-wider text-are-primary/50 mb-2">Order summary</p>
+            <div className="space-y-1">
+              {items.map((item) => (
+                <div key={item.id} className="flex justify-between text-sm text-are-primary/70">
+                  <span>{item.quantity}x {item.name}{item.selectedSize ? ` (${item.selectedSize})` : ''}</span>
+                  <span>€{(item.unitPrice * item.quantity).toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-between font-heading font-bold text-are-primary pt-2 mt-2 border-t border-are-primary/10">
+              <span>Total</span>
+              <span className="text-are-gold">€{total.toFixed(2)}</span>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={status === 'submitting'}
+            className="w-full bg-are-gold hover:bg-are-gold/90 text-are-black font-label text-sm font-semibold tracking-wider py-4 rounded-full transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {status === 'submitting' ? 'Submitting...' : 'Confirm My Order'}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+function FormField({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) {
+  return (
+    <div>
+      <label className="block font-label text-[10px] tracking-wider text-are-primary/60 mb-2">
+        {label} {required && <span className="text-are-paprika">*</span>}
+      </label>
+      {children}
+    </div>
   );
 }

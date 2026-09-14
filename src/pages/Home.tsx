@@ -1,11 +1,13 @@
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, UtensilsCrossed, Carrot, MessageCircle, MapPin, BookOpen, Users, Heart } from 'lucide-react';
+import { ArrowRight, Star, UtensilsCrossed, Carrot, MessageCircle, MapPin, BookOpen, Users, Heart, Plus } from 'lucide-react';
 import HeroCarousel from '@/components/HeroCarousel';
 import Reveal from '@/components/Reveal';
 import SectionTitle from '@/components/SectionTitle';
-import { menuItems } from '@/data/menu';
+import type { MenuItem } from '@/data/menu';
 import { galleryImages, aboutValueCards, site } from '@/data/site';
 import { useCart } from '@/context/CartContext';
+import { supabase } from '@/lib/supabase';
 
 const badges = [
   { icon: UtensilsCrossed, text: 'Authentic West African Cuisine' },
@@ -23,8 +25,22 @@ const valueIcons: Record<string, React.ComponentType<{ className?: string }>> = 
 
 export default function Home() {
   const { addItem } = useCart();
-  const featuredItems = menuItems.filter((i) => i.popular).slice(0, 4);
+  const [featuredItems, setFeaturedItems] = useState<MenuItem[]>([]);
   const previewGallery = galleryImages.slice(0, 6);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      const { data } = await supabase
+        .from('menu_items')
+        .select('*')
+        .eq('available', true)
+        .eq('featured', true)
+        .order('sort_order', { ascending: true })
+        .limit(4);
+      setFeaturedItems((data as MenuItem[]) ?? []);
+    };
+    fetchFeatured();
+  }, []);
 
   return (
     <div>
@@ -52,41 +68,50 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
             eyebrow="Chef's Selection"
-            title="Most Loved"
+            title="Our Signature"
             italicPart="Dishes"
-            subtitle="Discover the flavours that keep our guests coming back for more."
+            subtitle="Tastes like Love — Made with passion every day"
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
-            {featuredItems.map((item, i) => (
-              <Reveal key={item.id} delay={i * 100}>
-                <div className="group bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-are-primary/5 flex gap-4">
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-heading text-xl font-semibold text-are-primary">{item.name}</h3>
-                      <span className="font-heading text-lg font-bold text-are-gold whitespace-nowrap ml-4">€{item.price}</span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+            {featuredItems.map((item, i) => {
+              const displayPrice = item.sizes && item.sizes.length > 0 ? item.sizes[0].price : item.price;
+              return (
+                <Reveal key={item.id} delay={i * 100}>
+                  <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-are-primary/5 overflow-hidden flex flex-col h-full">
+                    <div className="aspect-[4/3] bg-gradient-to-br from-are-primary/5 to-are-gold/5 flex items-center justify-center relative">
+                      <span className="text-are-primary/20 font-label text-xs tracking-wider text-center px-4">[Photo: {item.name}]</span>
+                      <span className="absolute top-3 left-3 flex items-center gap-1 bg-are-gold text-are-black text-[10px] font-label font-bold px-2.5 py-1 rounded-full">
+                        <Star className="w-3 h-3 fill-are-black" /> Featured
+                      </span>
                     </div>
-                    <p className="text-sm text-are-primary/60 mb-4">{item.description}</p>
-                    <div className="flex items-center gap-3">
-                      <button
-                        onClick={() => addItem(item)}
-                        className="bg-are-primary hover:bg-are-primary/90 text-are-ivory font-label text-xs font-semibold tracking-wider px-5 py-2.5 rounded-full transition-all duration-300 hover:scale-105"
-                      >
-                        Add to Order
-                      </button>
-                      <div className="flex gap-1.5">
-                        {item.popular && (
-                          <span className="flex items-center gap-1 text-[10px] font-label text-are-gold bg-are-gold/10 px-2 py-1 rounded-full">
-                            <Star className="w-3 h-3 fill-are-gold" /> Popular
-                          </span>
-                        )}
-                        {item.spicy && <span className="text-[10px] font-label text-are-paprika bg-are-paprika/10 px-2 py-1 rounded-full">Spicy</span>}
-                        {item.vegetarian && <span className="text-[10px] font-label text-are-indigo bg-are-indigo/10 px-2 py-1 rounded-full">Veg</span>}
+                    <div className="p-5 flex flex-col flex-1">
+                      <h3 className="font-heading text-lg font-semibold text-are-primary mb-1">{item.name}</h3>
+                      {item.description && (
+                        <p className="text-sm italic text-are-primary/50 mb-3">{item.description}</p>
+                      )}
+                      <div className="mt-auto">
+                        <div className="flex items-center justify-between mb-3">
+                          {displayPrice !== null && displayPrice !== undefined ? (
+                            <span className="font-heading text-xl font-bold text-are-gold">€{displayPrice.toFixed(2)}</span>
+                          ) : (
+                            <span className="font-heading text-sm italic text-are-primary/50">Price on request</span>
+                          )}
+                          {item.sizes && item.sizes.length > 0 && (
+                            <span className="text-[10px] text-are-primary/40">from {item.sizes[0].label}</span>
+                          )}
+                        </div>
+                        <button
+                          onClick={() => addItem(item, item.sizes && item.sizes.length > 0 ? item.sizes[0].label : null, displayPrice ?? 0)}
+                          className="w-full bg-[#B9472E] hover:bg-[#B9472E]/90 text-are-ivory font-label text-xs font-semibold tracking-wider py-3 rounded-full transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
+                        >
+                          <Plus className="w-3.5 h-3.5" /> Add to Order
+                        </button>
                       </div>
                     </div>
                   </div>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              );
+            })}
           </div>
           <div className="text-center mt-10">
             <Link
