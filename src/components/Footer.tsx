@@ -19,7 +19,7 @@ export default function Footer() {
           {/* Column 1 — Brand */}
           <div>
             <img
-              src="https://i.imgur.com/JHfTvcb.png"
+              src="/ares-logo.png"
               alt="African Restaurant Estonia"
               className="w-full max-w-[400px] rounded-md object-contain mb-5"
             />

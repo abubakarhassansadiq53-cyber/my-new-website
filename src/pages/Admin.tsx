@@ -59,7 +59,7 @@ export default function Admin() {
       {/* Header */}
       <header className="bg-[#1a1818] border-b border-white/10 px-4 sm:px-6 py-4 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <img src="https://i.imgur.com/JHfTvcb.png" alt="ARE" className="h-10 w-auto max-w-[140px] object-contain" />
+          <img src="/ares-logo.png" alt="ARE" className="h-10 w-auto max-w-[140px] object-contain" />
           <span className="font-label text-xs tracking-wider text-[#D89A27] hidden sm:inline">Admin Dashboard</span>
         </div>
         <button
