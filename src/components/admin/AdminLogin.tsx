@@ -25,7 +25,7 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-[#151313] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src="/ares-logo.png" alt="ARE" className="h-20 w-auto mx-auto mb-4 object-contain" />
+          <img src="https://i.imgur.com/JHfTvcb.png" alt="ARE" className="h-20 w-auto mx-auto mb-4 object-contain" />
           <h1 className="font-heading text-2xl font-bold text-[#D89A27]">Admin Dashboard</h1>
           <p className="text-white/40 text-sm mt-2">Sign in to manage your restaurant</p>
         </div>
