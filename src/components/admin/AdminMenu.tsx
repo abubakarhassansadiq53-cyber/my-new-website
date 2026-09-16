@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import { menuCategories, type MenuItem } from '@/data/menu';
+import { menuCategories, type MenuItem, type AddOn } from '@/data/menu';
 import { Plus, Search, Pencil, Trash2, Star, Eye, EyeOff, X, Upload, AlertCircle } from 'lucide-react';
 
 const ALL_SIZES = ['Small', 'Medium', 'Large'];
@@ -181,6 +181,7 @@ function DishForm({ item, onClose, onSaved }: { item: MenuItem | null; onClose: 
   const [moqRequired, setMoqRequired] = useState(item?.moq_required ?? false);
   const [available, setAvailable] = useState(item?.available ?? true);
   const [featured, setFeatured] = useState(item?.featured ?? false);
+  const [addons, setAddons] = useState<string>(item?.addons ? item.addons.map((a: AddOn) => `${a.name}:${a.price}`).join(', ') : '');
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
@@ -211,6 +212,8 @@ function DishForm({ item, onClose, onSaved }: { item: MenuItem | null; onClose: 
     setSaving(true);
     setError('');
 
+    const parsedAddons = addons.trim() ? addons.split(',').map((s) => { const [name, price] = s.split(':').map((p) => p.trim()); return { name, price: parseFloat(price) || 0 }; }).filter((a) => a.name) : null;
+
     const payload = {
       name,
       category,
@@ -221,6 +224,7 @@ function DishForm({ item, onClose, onSaved }: { item: MenuItem | null; onClose: 
       moq_required: moqRequired,
       available,
       featured,
+      addons: parsedAddons,
     };
 
     const { error: saveError } = item
@@ -289,6 +293,11 @@ function DishForm({ item, onClose, onSaved }: { item: MenuItem | null; onClose: 
               </label>
               {imageUrl && <img src={imageUrl} alt="Preview" className="w-12 h-12 rounded-lg object-cover" />}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-label tracking-wider text-white/50 mb-2">Add-ons (name:price, comma separated)</label>
+            <input type="text" value={addons} onChange={(e) => setAddons(e.target.value)} className="admin-input" placeholder="Extra Plantain:2.50, Extra Meat:3.50" />
           </div>
 
           <div className="grid grid-cols-3 gap-3">

@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Star, UtensilsCrossed, Carrot, MessageCircle, MapPin, BookOpen, Users, Heart, Plus } from 'lucide-react';
+import { ArrowRight, Star, UtensilsCrossed, Carrot, MessageCircle, MapPin, BookOpen, Users, Heart, Plus, Flame, Calendar, Leaf } from 'lucide-react';
 import HeroCarousel from '@/components/HeroCarousel';
 import Reveal from '@/components/Reveal';
 import SectionTitle from '@/components/SectionTitle';
 import type { MenuItem } from '@/data/menu';
+import type { ChefSpecial } from '@/data/menu';
+import { chefSpecialTypes } from '@/data/menu';
 import { cateringImages, aboutValueCards, site } from '@/data/site';
 import { useCart } from '@/context/CartContext';
 import { supabase } from '@/lib/supabase';
@@ -25,6 +27,13 @@ const valueIcons: Record<string, React.ComponentType<{ className?: string }>> = 
 
 const SIZE_PRICES: Record<string, number> = { Small: 8, Medium: 12, Large: 16 };
 
+const specialTypeIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+  special_edition: Star,
+  todays_menu: Calendar,
+  combo_meal: Flame,
+  vegan_option: Leaf,
+};
+
 function getDisplayPrice(item: MenuItem): number | null {
   if (item.price !== null) return item.price;
   if (item.sizes_available && item.sizes_available.length > 0) {
@@ -37,6 +46,8 @@ function getDisplayPrice(item: MenuItem): number | null {
 export default function Home() {
   const { addItem } = useCart();
   const [featuredItems, setFeaturedItems] = useState<MenuItem[]>([]);
+  const [chefSpecials, setChefSpecials] = useState<ChefSpecial[]>([]);
+  const [todaysMeal, setTodaysMeal] = useState<ChefSpecial | null>(null);
   const previewCatering = cateringImages.slice(0, 6);
 
   useEffect(() => {
@@ -51,6 +62,19 @@ export default function Home() {
       setFeaturedItems((data as MenuItem[]) ?? []);
     };
     fetchFeatured();
+
+    const fetchChefSpecials = async () => {
+      const { data } = await supabase
+        .from('chef_specials')
+        .select('*')
+        .eq('available', true)
+        .order('sort_order', { ascending: true });
+      const all = (data as ChefSpecial[]) ?? [];
+      setChefSpecials(all);
+      const todays = all.find((s) => s.is_todays_meal && s.special_type === 'todays_menu') ?? null;
+      setTodaysMeal(todays);
+    };
+    fetchChefSpecials();
   }, []);
 
   return (
@@ -72,6 +96,7 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Chef Special Section with 4 subsections */}
       <section className="py-20 bg-are-ivory">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
@@ -80,50 +105,132 @@ export default function Home() {
             italicPart="Dishes"
             subtitle="Tastes like Love — Made with passion every day"
           />
+
+          {/* Today's Meal highlight */}
+          {todaysMeal && (
+            <Reveal>
+              <div className="mt-10 mb-12 bg-gradient-to-r from-are-primary to-[#321B29] rounded-2xl overflow-hidden shadow-lg">
+                <div className="grid md:grid-cols-2 gap-0 items-center">
+                  <div className="p-8 sm:p-10 text-are-ivory">
+                    <span className="inline-flex items-center gap-2 bg-are-gold text-are-black text-[10px] font-label font-bold px-3 py-1.5 rounded-full mb-4">
+                      <Calendar className="w-3 h-3" /> Today's Meal
+                    </span>
+                    <h3 className="font-heading text-3xl font-bold mb-3">{todaysMeal.name}</h3>
+                    {todaysMeal.description && <p className="text-are-ivory/70 text-sm mb-4">{todaysMeal.description}</p>}
+                    <div className="flex items-center gap-4">
+                      <span className="font-heading text-3xl font-bold text-are-gold">€{todaysMeal.price.toFixed(2)}</span>
+                      <Link to="/contact" className="bg-are-gold hover:bg-are-gold/90 text-are-black font-label text-xs font-semibold tracking-wider px-6 py-3 rounded-full transition-all hover:scale-105">
+                        Order Now
+                      </Link>
+                    </div>
+                  </div>
+                  <div className="h-full min-h-[200px] bg-are-gold/10 flex items-center justify-center">
+                    {todaysMeal.image_url ? (
+                      <img src={todaysMeal.image_url} alt={todaysMeal.name} className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-are-ivory/20 font-label text-sm">[Photo: {todaysMeal.name}]</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+          )}
+
+          {/* 4 subsections */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
-            {featuredItems.map((item, i) => {
-              const displayPrice = getDisplayPrice(item);
-              const firstSize = item.sizes_available && item.sizes_available.length > 0 ? item.sizes_available[0] : null;
+            {chefSpecialTypes.map((type, i) => {
+              const Icon = specialTypeIcons[type.key] ?? Star;
+              const items = chefSpecials.filter((s) => s.special_type === type.key && s.available);
               return (
-                <Reveal key={item.id} delay={i * 100}>
-                  <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-are-primary/5 overflow-hidden flex flex-col h-full">
-                    <div className="aspect-[4/3] bg-gradient-to-br from-are-primary/5 to-are-gold/5 flex items-center justify-center relative">
-                      {item.image_url ? (
-                        <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <span className="text-are-primary/20 font-label text-xs tracking-wider text-center px-4">[Photo: {item.name}]</span>
-                      )}
-                      <span className="absolute top-3 left-3 flex items-center gap-1 bg-are-gold text-are-black text-[10px] font-label font-bold px-2.5 py-1 rounded-full">
-                        <Star className="w-3 h-3 fill-are-black" /> Featured
-                      </span>
+                <Reveal key={type.key} delay={i * 100}>
+                  <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-are-primary/5 overflow-hidden flex flex-col h-full">
+                    <div className="p-5 border-b border-are-primary/5 bg-gradient-to-br from-are-primary/5 to-are-gold/5">
+                      <div className="w-10 h-10 rounded-full bg-are-gold/15 flex items-center justify-center mb-3">
+                        <Icon className="w-5 h-5 text-are-gold" />
+                      </div>
+                      <h3 className="font-heading text-base font-semibold text-are-primary">{type.label}</h3>
                     </div>
                     <div className="p-5 flex flex-col flex-1">
-                      <h3 className="font-heading text-lg font-semibold text-are-primary mb-1">{item.name}</h3>
-                      {item.pairs_with && item.pairs_with.length > 0 && (
-                        <p className="text-sm italic text-are-primary/50 mb-3">Pairs with: {item.pairs_with.slice(0, 3).join(', ')}</p>
-                      )}
-                      <div className="mt-auto">
-                        <div className="flex items-center justify-between mb-3">
-                          {displayPrice !== null ? (
-                            <span className="font-heading text-xl font-bold text-are-gold">€{displayPrice.toFixed(2)}</span>
-                          ) : (
-                            <span className="font-heading text-sm italic text-are-primary/50">Price on request</span>
-                          )}
-                          {firstSize && <span className="text-[10px] text-are-primary/40">from {firstSize}</span>}
+                      {items.length === 0 ? (
+                        <p className="text-sm text-are-primary/40 italic">Coming soon</p>
+                      ) : (
+                        <div className="space-y-3">
+                          {items.slice(0, 3).map((item) => (
+                            <div key={item.id} className="flex items-center justify-between">
+                              <div>
+                                <p className="text-sm font-medium text-are-primary">{item.name}</p>
+                                {item.is_todays_meal && (
+                                  <span className="text-[9px] bg-are-gold/20 text-are-gold px-1.5 py-0.5 rounded-full font-label">Today</span>
+                                )}
+                              </div>
+                              <span className="font-heading text-sm font-bold text-are-gold">€{item.price.toFixed(2)}</span>
+                            </div>
+                          ))}
                         </div>
-                        <button
-                          onClick={() => addItem(item, firstSize, displayPrice ?? 0)}
-                          className="w-full bg-[#B9472E] hover:bg-[#B9472E]/90 text-are-ivory font-label text-xs font-semibold tracking-wider py-3 rounded-full transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
-                        >
-                          <Plus className="w-3.5 h-3.5" /> Add to Order
-                        </button>
-                      </div>
+                      )}
+                      <Link to="/contact" className="mt-auto pt-4 text-xs font-label tracking-wider text-are-paprika hover:text-are-primary transition-colors">
+                        Order →
+                      </Link>
                     </div>
                   </div>
                 </Reveal>
               );
             })}
           </div>
+
+          {/* Featured dishes */}
+          {featuredItems.length > 0 && (
+            <>
+              <div className="mt-16 pt-8 border-t border-are-primary/10">
+                <h3 className="font-heading text-xl font-semibold text-are-primary mb-6 text-center">Featured Dishes</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {featuredItems.map((item, i) => {
+                    const displayPrice = getDisplayPrice(item);
+                    const firstSize = item.sizes_available && item.sizes_available.length > 0 ? item.sizes_available[0] : null;
+                    return (
+                      <Reveal key={item.id} delay={i * 100}>
+                        <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-are-primary/5 overflow-hidden flex flex-col h-full">
+                          <div className="aspect-[4/3] bg-gradient-to-br from-are-primary/5 to-are-gold/5 flex items-center justify-center relative">
+                            {item.image_url ? (
+                              <img src={item.image_url} alt={item.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <span className="text-are-primary/20 font-label text-xs tracking-wider text-center px-4">[Photo: {item.name}]</span>
+                            )}
+                            <span className="absolute top-3 left-3 flex items-center gap-1 bg-are-gold text-are-black text-[10px] font-label font-bold px-2.5 py-1 rounded-full">
+                              <Star className="w-3 h-3 fill-are-black" /> Featured
+                            </span>
+                          </div>
+                          <div className="p-5 flex flex-col flex-1">
+                            <h3 className="font-heading text-lg font-semibold text-are-primary mb-1">{item.name}</h3>
+                            {item.pairs_with && item.pairs_with.length > 0 && (
+                              <p className="text-sm italic text-are-primary/50 mb-3">Pairs with: {item.pairs_with.slice(0, 3).join(', ')}</p>
+                            )}
+                            <div className="mt-auto">
+                              <div className="flex items-center justify-between mb-3">
+                                {displayPrice !== null ? (
+                                  <span className="font-heading text-xl font-bold text-are-gold">€{displayPrice.toFixed(2)}</span>
+                                ) : (
+                                  <span className="font-heading text-sm italic text-are-primary/50">Price on request</span>
+                                )}
+                                {firstSize && <span className="text-[10px] text-are-primary/40">from {firstSize}</span>}
+                              </div>
+                              <button
+                                onClick={() => addItem(item, firstSize, displayPrice ?? 0)}
+                                className="w-full bg-[#B9472E] hover:bg-[#B9472E]/90 text-are-ivory font-label text-xs font-semibold tracking-wider py-3 rounded-full transition-all duration-300 hover:scale-[1.02] flex items-center justify-center gap-2"
+                              >
+                                <Plus className="w-3.5 h-3.5" /> Add to Order
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </Reveal>
+                    );
+                  })}
+                </div>
+              </div>
+            </>
+          )}
+
           <div className="text-center mt-10">
             <Link
               to="/menu"

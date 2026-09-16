@@ -14,6 +14,8 @@ interface ReservationRow {
   special_requests: string | null;
   status: string;
   created_at: string;
+  cooking_service: boolean;
+  reservation_type: string;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -95,6 +97,7 @@ export default function AdminReservations() {
                 <th className="pb-3 pr-4 hidden md:table-cell">Phone</th>
                 <th className="pb-3 pr-4 hidden lg:table-cell">Email</th>
                 <th className="pb-3 pr-4">Guests</th>
+                <th className="pb-3 pr-4 hidden lg:table-cell">Type</th>
                 <th className="pb-3 pr-4 hidden lg:table-cell">Occasion</th>
                 <th className="pb-3 pr-4">Status</th>
                 <th className="pb-3 text-right">Actions</th>
@@ -109,6 +112,7 @@ export default function AdminReservations() {
                   <td className="py-3 pr-4 hidden md:table-cell"><span className="text-white/60 text-sm">{res.customer_phone}</span></td>
                   <td className="py-3 pr-4 hidden lg:table-cell"><span className="text-white/60 text-xs">{res.customer_email ?? '—'}</span></td>
                   <td className="py-3 pr-4"><span className="text-white/60 text-sm">{res.guests}</span></td>
+                  <td className="py-3 pr-4 hidden lg:table-cell"><span className={`text-xs ${res.cooking_service ? 'text-[#D89A27] font-semibold' : 'text-white/60'}`}>{res.cooking_service ? 'Cooking Service' : 'Dining'}</span></td>
                   <td className="py-3 pr-4 hidden lg:table-cell"><span className="text-white/60 text-xs">{res.occasion ?? '—'}</span></td>
                   <td className="py-3 pr-4">
                     <span className={`text-xs font-semibold rounded-full px-2.5 py-1 ${STATUS_COLORS[res.status] ?? 'bg-white/10 text-white/60'}`}>{res.status}</span>
@@ -143,6 +147,12 @@ export default function AdminReservations() {
               <div className="flex justify-between"><span className="text-white/40">Phone:</span><span className="text-white">{viewRes.customer_phone}</span></div>
               {viewRes.customer_email && <div className="flex justify-between"><span className="text-white/40">Email:</span><span className="text-white">{viewRes.customer_email}</span></div>}
               <div className="flex justify-between"><span className="text-white/40">Guests:</span><span className="text-white">{viewRes.guests}</span></div>
+              {viewRes.cooking_service && (
+                <div className="flex justify-between">
+                  <span className="text-white/40">Booking Type:</span>
+                  <span className="text-[#D89A27] font-semibold">Cooking Service</span>
+                </div>
+              )}
               {viewRes.occasion && <div className="flex justify-between"><span className="text-white/40">Occasion:</span><span className="text-white">{viewRes.occasion}</span></div>}
               <div className="flex justify-between"><span className="text-white/40">Status:</span><span className={`text-xs font-semibold rounded-full px-2.5 py-1 ${STATUS_COLORS[viewRes.status]}`}>{viewRes.status}</span></div>
               {viewRes.special_requests && (

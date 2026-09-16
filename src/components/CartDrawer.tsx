@@ -13,7 +13,10 @@ export default function CartDrawer() {
 
   const handleWhatsAppOrder = () => {
     const orderLines = items.map(
-      (i) => `${i.quantity}x ${i.name}${i.selectedSize ? ` (${i.selectedSize})` : ''} — €${(i.unitPrice * i.quantity).toFixed(2)}`
+      (i) => {
+        const addonText = i.selectedAddOns && i.selectedAddOns.length > 0 ? ` (Add-ons: ${i.selectedAddOns.map(a => a.name).join(', ')})` : '';
+        return `${i.quantity}x ${i.name}${i.selectedSize ? ` (${i.selectedSize})` : ''}${addonText} — €${((i.unitPrice + (i.selectedAddOns?.reduce((s, a) => s + a.price, 0) ?? 0)) * i.quantity).toFixed(2)}`;
+      }
     );
     const message =
       `Hi African Restaurant Estonia!\n\nI'd like to place an order:\n\n${orderLines.join('\n')}\n\nOrder Total: €${totalPrice.toFixed(2)}\nSpecial requests: ${notes || 'None'}\n\nPlease confirm. Thank you!`;
@@ -47,30 +50,36 @@ export default function CartDrawer() {
             </div>
           ) : (
             <div className="space-y-4">
-              {items.map((item) => (
-                <div key={item.id} className="flex gap-3 pb-4 border-b border-are-ivory/10">
-                  <div className="flex-1">
-                    <h4 className="font-heading text-base text-are-ivory font-semibold">{item.name}</h4>
-                    {item.selectedSize && <p className="text-xs text-are-gold/70 mb-1">Size: {item.selectedSize}</p>}
-                    <p className="text-xs text-are-ivory/40 mb-2">€{item.unitPrice.toFixed(2)} each</p>
-                    <div className="flex items-center gap-3">
-                      <button onClick={() => updateQuantity(String(item.id), -1)} className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors" aria-label={`Decrease ${item.name}`}>
-                        <Minus className="w-3.5 h-3.5 text-are-ivory" />
-                      </button>
-                      <span className="font-label text-sm font-semibold w-6 text-center text-are-ivory">{item.quantity}</span>
-                      <button onClick={() => updateQuantity(String(item.id), 1)} className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors" aria-label={`Increase ${item.name}`}>
-                        <Plus className="w-3.5 h-3.5 text-are-ivory" />
-                      </button>
-                      <button onClick={() => removeItem(String(item.id))} className="ml-auto text-are-paprika hover:text-are-paprika/70 transition-colors" aria-label={`Remove ${item.name}`}>
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+              {items.map((item) => {
+                const addonTotal = (item.selectedAddOns ?? []).reduce((s, a) => s + a.price, 0);
+                return (
+                  <div key={item.cartId} className="flex gap-3 pb-4 border-b border-are-ivory/10">
+                    <div className="flex-1">
+                      <h4 className="font-heading text-base text-are-ivory font-semibold">{item.name}</h4>
+                      {item.selectedSize && <p className="text-xs text-are-gold/70 mb-1">Size: {item.selectedSize}</p>}
+                      {item.selectedAddOns && item.selectedAddOns.length > 0 && (
+                        <p className="text-xs text-are-ivory/50 mb-1">Add-ons: {item.selectedAddOns.map(a => a.name).join(', ')}</p>
+                      )}
+                      <p className="text-xs text-are-ivory/40 mb-2">€{(item.unitPrice + addonTotal).toFixed(2)} each</p>
+                      <div className="flex items-center gap-3">
+                        <button onClick={() => updateQuantity(item.cartId, -1)} className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors" aria-label={`Decrease ${item.name}`}>
+                          <Minus className="w-3.5 h-3.5 text-are-ivory" />
+                        </button>
+                        <span className="font-label text-sm font-semibold w-6 text-center text-are-ivory">{item.quantity}</span>
+                        <button onClick={() => updateQuantity(item.cartId, 1)} className="w-7 h-7 rounded-full bg-are-ivory/10 hover:bg-are-ivory/20 flex items-center justify-center transition-colors" aria-label={`Increase ${item.name}`}>
+                          <Plus className="w-3.5 h-3.5 text-are-ivory" />
+                        </button>
+                        <button onClick={() => removeItem(item.cartId)} className="ml-auto text-are-paprika hover:text-are-paprika/70 transition-colors" aria-label={`Remove ${item.name}`}>
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-heading text-base font-bold text-are-gold">€{((item.unitPrice + addonTotal) * item.quantity).toFixed(2)}</p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <p className="font-heading text-base font-bold text-are-gold">€{(item.unitPrice * item.quantity).toFixed(2)}</p>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -141,6 +150,7 @@ function EmailCheckoutModal({
       size: i.selectedSize,
       quantity: i.quantity,
       price: i.unitPrice,
+      add_ons: i.selectedAddOns ?? [],
     }));
 
     try {
@@ -243,12 +253,15 @@ function EmailCheckoutModal({
           <div className="bg-are-primary/5 rounded-xl p-4">
             <p className="font-label text-[10px] tracking-wider text-are-primary/50 mb-2">Order summary</p>
             <div className="space-y-1">
-              {items.map((item) => (
-                <div key={item.id} className="flex justify-between text-sm text-are-primary/70">
-                  <span>{item.quantity}x {item.name}{item.selectedSize ? ` (${item.selectedSize})` : ''}</span>
-                  <span>€{(item.unitPrice * item.quantity).toFixed(2)}</span>
-                </div>
-              ))}
+              {items.map((item) => {
+                const addonTotal = (item.selectedAddOns ?? []).reduce((s, a) => s + a.price, 0);
+                return (
+                  <div key={item.cartId} className="flex justify-between text-sm text-are-primary/70">
+                    <span>{item.quantity}x {item.name}{item.selectedSize ? ` (${item.selectedSize})` : ''}{item.selectedAddOns && item.selectedAddOns.length > 0 ? ` +${item.selectedAddOns.map(a => a.name).join('/')}` : ''}</span>
+                    <span>€{((item.unitPrice + addonTotal) * item.quantity).toFixed(2)}</span>
+                  </div>
+                );
+              })}
             </div>
             <div className="flex justify-between font-heading font-bold text-are-primary pt-2 mt-2 border-t border-are-primary/10">
               <span>Total</span>

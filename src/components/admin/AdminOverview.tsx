@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { UtensilsCrossed, ShoppingBag, CalendarDays, TrendingUp, Plus, Clock, ArrowRight } from 'lucide-react';
 
-type Tab = 'overview' | 'menu' | 'orders' | 'reservations' | 'settings';
+type Tab = 'overview' | 'menu' | 'chef_specials' | 'orders' | 'reservations' | 'settings';
 
 interface Props {
   onNavigate: (tab: Tab) => void;

@@ -7,9 +7,10 @@ import AdminMenu from '@/components/admin/AdminMenu';
 import AdminOrders from '@/components/admin/AdminOrders';
 import AdminReservations from '@/components/admin/AdminReservations';
 import AdminSettings from '@/components/admin/AdminSettings';
-import { LayoutDashboard, UtensilsCrossed, ShoppingBag, CalendarDays, Settings, LogOut } from 'lucide-react';
+import AdminChefSpecials from '@/components/admin/AdminChefSpecials';
+import { LayoutDashboard, UtensilsCrossed, ShoppingBag, CalendarDays, Settings, LogOut, ChefHat } from 'lucide-react';
 
-type Tab = 'overview' | 'menu' | 'orders' | 'reservations' | 'settings';
+type Tab = 'overview' | 'menu' | 'chef_specials' | 'orders' | 'reservations' | 'settings';
 
 export default function Admin() {
   const [session, setSession] = useState<Session | null>(null);
@@ -49,6 +50,7 @@ export default function Admin() {
   const tabs: { id: Tab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: 'overview', label: 'Overview', icon: LayoutDashboard },
     { id: 'menu', label: 'Menu', icon: UtensilsCrossed },
+    { id: 'chef_specials', label: 'Chef Specials', icon: ChefHat },
     { id: 'orders', label: 'Orders', icon: ShoppingBag },
     { id: 'reservations', label: 'Reservations', icon: CalendarDays },
     { id: 'settings', label: 'Settings', icon: Settings },
@@ -104,6 +106,7 @@ export default function Admin() {
         <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden">
           {activeTab === 'overview' && <AdminOverview onNavigate={setActiveTab} />}
           {activeTab === 'menu' && <AdminMenu />}
+          {activeTab === 'chef_specials' && <AdminChefSpecials />}
           {activeTab === 'orders' && <AdminOrders />}
           {activeTab === 'reservations' && <AdminReservations />}
           {activeTab === 'settings' && <AdminSettings />}
