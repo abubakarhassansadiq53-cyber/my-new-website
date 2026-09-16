@@ -57,9 +57,18 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-[#151313] text-white flex flex-col">
       {/* Header */}
-      <header className="bg-[#1a1818] border-b border-white/10 px-4 sm:px-6 py-4 flex items-center justify-between sticky top-0 z-40">
-        <div className="flex items-center gap-3">
-          <img src="https://i.imgur.com/JHfTvcb.png" alt="ARE" className="h-10 w-auto max-w-[140px] object-contain" />
+      <header
+        className="border-b border-white/10 px-4 sm:px-6 py-4 flex items-center justify-between sticky top-0 z-40"
+        style={{
+          backgroundImage: 'url(https://i.imgur.com/JHfTvcb.png)',
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'left center',
+          backgroundColor: 'rgba(26, 24, 24, 0.85)',
+          backgroundBlendMode: 'overlay',
+        }}
+      >
+        <div className="flex items-center gap-3 pl-[180px] sm:pl-[200px]">
           <span className="font-label text-xs tracking-wider text-[#D89A27] hidden sm:inline">Admin Dashboard</span>
         </div>
         <button

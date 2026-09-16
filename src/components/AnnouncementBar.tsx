@@ -1,22 +1,20 @@
-import { site } from '@/data/site';
-
-const marqueeItems = [
-  'Authentic Nigerian & West African Cuisine in Tallinn',
-  `Tel ${site.phone}`,
-  site.addressShort,
-  'Order via WhatsApp or Email',
-  'Tastes like Love',
-  'A Taste of West Africa, Right Here',
-];
-
-const marqueeText = marqueeItems.join('  —  ');
+import { Truck, Store } from 'lucide-react';
 
 export default function AnnouncementBar() {
   return (
-    <div className="bg-are-gold text-are-black overflow-hidden py-2 relative z-[60]">
-      <div className="flex whitespace-nowrap animate-marquee">
-        <span className="font-label text-[11px] font-semibold tracking-wide px-8">{marqueeText}</span>
-        <span className="font-label text-[11px] font-semibold tracking-wide px-8" aria-hidden="true">{marqueeText}</span>
+    <div className="bg-are-primary text-are-ivory py-2 relative z-[60] border-b border-are-gold/20">
+      <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-6 text-center">
+        <span className="flex items-center gap-2 font-label text-[11px] sm:text-xs font-medium tracking-wide text-are-ivory/80">
+          <Truck className="w-3.5 h-3.5 text-are-gold shrink-0" />
+          Delivery Available
+        </span>
+        <span className="hidden sm:flex items-center gap-2 font-label text-[11px] sm:text-xs font-medium tracking-wide text-are-ivory/80">
+          <Store className="w-3.5 h-3.5 text-are-gold shrink-0" />
+          Pick-up Available
+        </span>
+        <span className="font-label text-[11px] sm:text-xs font-medium tracking-wide text-are-gold/70 italic">
+          Not a restaurant — we cook fresh to order
+        </span>
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import HeroCarousel from '@/components/HeroCarousel';
 import Reveal from '@/components/Reveal';
 import SectionTitle from '@/components/SectionTitle';
 import type { MenuItem } from '@/data/menu';
-import { galleryImages, aboutValueCards, site } from '@/data/site';
+import { cateringImages, aboutValueCards, site } from '@/data/site';
 import { useCart } from '@/context/CartContext';
 import { supabase } from '@/lib/supabase';
 
@@ -37,7 +37,7 @@ function getDisplayPrice(item: MenuItem): number | null {
 export default function Home() {
   const { addItem } = useCart();
   const [featuredItems, setFeaturedItems] = useState<MenuItem[]>([]);
-  const previewGallery = galleryImages.slice(0, 6);
+  const previewCatering = cateringImages.slice(0, 6);
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -75,7 +75,7 @@ export default function Home() {
       <section className="py-20 bg-are-ivory">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            eyebrow="Chef's Selection"
+            eyebrow="Chef Special"
             title="Our Signature"
             italicPart="Dishes"
             subtitle="Tastes like Love — Made with passion every day"
@@ -183,13 +183,13 @@ export default function Home() {
       <section className="py-20 bg-are-ivory">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SectionTitle
-            eyebrow="Gallery"
+            eyebrow="Catering"
             title="A Feast for"
             italicPart="the Eyes"
             subtitle="A glimpse of the vibrant dishes and warm moments at ARE."
           />
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-12">
-            {previewGallery.map((img, i) => (
+            {previewCatering.map((img, i) => (
               <Reveal key={i} delay={i * 80}>
                 <div className="group relative overflow-hidden rounded-xl aspect-[4/3]">
                   <img
@@ -207,10 +207,10 @@ export default function Home() {
           </div>
           <div className="text-center mt-10">
             <Link
-              to="/gallery"
+              to="/catering"
               className="inline-flex items-center gap-2 border-2 border-are-primary text-are-primary hover:bg-are-primary hover:text-are-ivory font-label text-sm font-semibold tracking-wider px-8 py-3.5 rounded-full transition-all duration-300"
             >
-              View Full Gallery <ArrowRight className="w-4 h-4" />
+              View Full Catering <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

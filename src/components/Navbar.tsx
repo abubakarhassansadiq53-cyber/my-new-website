@@ -8,7 +8,7 @@ const navLinks = [
   { label: 'Home', path: '/' },
   { label: 'Menu', path: '/menu' },
   { label: 'About', path: '/about' },
-  { label: 'Gallery', path: '/gallery' },
+  { label: 'Catering', path: '/catering' },
   { label: 'Location', path: '/location' },
   { label: 'Order', path: '/contact' },
 ];
@@ -46,9 +46,10 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-20">
             <Link to="/" className="flex items-center group" aria-label="African Restaurant Estonia home">
               <img
-                src="/ares-logo.png"
+                src="https://i.imgur.com/JHfTvcb.png"
                 alt="African Restaurant Estonia"
-                className="h-12 w-auto max-w-[190px] rounded-md object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+                className="h-16 w-auto max-w-[220px] object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+                style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}
               />
             </Link>
 

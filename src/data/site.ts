@@ -4,6 +4,7 @@ export const site = {
   tagline: 'A Taste of West Africa, Right Here.',
   secondary: ['Tastes like Love', 'Tastes Heavenly'],
   email: 'africanrestaurantestonia@gmail.com',
+  notificationEmail: 'hello.nielle@gmail.com',
   phone: '+372 5307 8208',
   phoneRaw: '+37253078208',
   whatsapp: 'https://wa.me/37253078208',
@@ -63,7 +64,7 @@ export const heroSlides = [
   },
 ];
 
-export const galleryImages = [
+export const cateringImages = [
   { src: 'https://images.pexels.com/photos/13915043/pexels-photo-13915043.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Jollof Rice steaming]', alt: 'Jollof rice with grilled chicken' },
   { src: 'https://images.pexels.com/photos/5490976/pexels-photo-5490976.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Modern restaurant kitchen]', alt: 'Chef in modern restaurant kitchen' },
   { src: 'https://images.pexels.com/photos/6426069/pexels-photo-6426069.jpeg?auto=compress&cs=tinysrgb&w=800', label: '[Upload: Soup plated]', alt: 'Steaming hot soup' },

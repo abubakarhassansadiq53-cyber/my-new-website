@@ -6,7 +6,7 @@ const exploreLinks = [
   { label: 'Home', path: '/' },
   { label: 'Menu', path: '/menu' },
   { label: 'About', path: '/about' },
-  { label: 'Gallery', path: '/gallery' },
+  { label: 'Catering', path: '/catering' },
   { label: 'Location', path: '/location' },
   { label: 'Contact', path: '/contact' },
 ];
@@ -19,9 +19,10 @@ export default function Footer() {
           {/* Column 1 — Brand */}
           <div>
             <img
-              src="/ares-logo.png"
+              src="https://i.imgur.com/JHfTvcb.png"
               alt="African Restaurant Estonia"
-              className="w-full max-w-[400px] rounded-md object-contain mb-5"
+              className="w-full max-w-[400px] object-contain mb-5"
+              style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}
             />
             <p className="font-heading italic text-are-gold/80 text-lg mb-4">"{site.tagline}"</p>
             <div className="flex gap-3">

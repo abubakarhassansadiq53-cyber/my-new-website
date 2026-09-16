@@ -25,7 +25,14 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-[#151313] flex items-center justify-center px-4">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <img src="https://i.imgur.com/JHfTvcb.png" alt="ARE" className="h-20 w-auto mx-auto mb-4 object-contain" />
+          <div
+            className="mx-auto mb-4 h-32 w-full max-w-[320px] bg-contain bg-no-repeat bg-center"
+            style={{
+              backgroundImage: 'url(https://i.imgur.com/JHfTvcb.png)',
+              filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.4))',
+            }}
+            aria-label="African Restaurant Estonia"
+          />
           <h1 className="font-heading text-2xl font-bold text-[#D89A27]">Admin Dashboard</h1>
           <p className="text-white/40 text-sm mt-2">Sign in to manage your restaurant</p>
         </div>
