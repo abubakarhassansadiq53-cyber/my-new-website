@@ -10,8 +10,8 @@ export const site = {
   whatsapp: 'https://wa.me/37253078208',
   instagram: 'https://www.instagram.com/africanrestaurantestonia',
   instagramHandle: '@africanrestaurantestonia',
-  address: 'Nelgi tn 29, 11213 Tallinn, Estonia',
-  addressShort: 'Nelgi tn 29, Tallinn',
+  address: 'Nelgi 30, 11213 Tallinn, Estonia',
+  addressShort: 'Nelgi 30, Tallinn',
   founded: 2026,
 };
 

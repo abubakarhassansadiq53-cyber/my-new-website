@@ -18,12 +18,16 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-are-ivory/10">
           {/* Column 1 — Brand */}
           <div>
-            <img
-              src="https://i.imgur.com/JHfTvcb.png"
-              alt="African Restaurant Estonia"
-              className="w-full max-w-[400px] object-contain mb-5"
-              style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}
-            />
+            <div className="relative h-20 w-20 sm:h-24 sm:w-24 rounded-full overflow-hidden bg-are-gold/10 ring-2 ring-are-gold/40 mb-5"
+              style={{ filter: 'drop-shadow(0 4px 14px rgba(216,154,39,0.3))' }}
+            >
+              <img
+                src="https://i.imgur.com/JHfTvcb.png"
+                alt="African Restaurant Estonia"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <p className="font-heading text-2xl font-bold text-are-ivory mb-2">African Restaurant Estonia</p>
             <p className="font-heading italic text-are-gold/80 text-lg mb-4">"{site.tagline}"</p>
             <div className="flex gap-3">
               <a href={site.instagram} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-are-ivory/10 hover:bg-are-gold flex items-center justify-center transition-colors group" aria-label="Instagram">

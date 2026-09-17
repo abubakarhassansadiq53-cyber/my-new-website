@@ -62,7 +62,7 @@ export default function Contact() {
                     <Store className="w-5 h-5 text-are-gold mt-0.5 shrink-0" />
                     <div>
                       <p className="font-semibold">Pick-up</p>
-                      <p className="text-sm text-are-ivory/60">Collect your order from Nelgi tn 29, Tallinn.</p>
+                      <p className="text-sm text-are-ivory/60">Collect your order from Nelgi 30, Tallinn.</p>
                     </div>
                   </div>
                 </div>

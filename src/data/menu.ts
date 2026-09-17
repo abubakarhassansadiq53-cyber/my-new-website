@@ -45,11 +45,25 @@ export const menuCategories = [
 ] as const;
 
 export const chefSpecialTypes = [
-  { key: 'special_edition', label: 'Special Edition Meal' },
+  { key: 'special_edition', label: 'Chef Special' },
   { key: 'todays_menu', label: "Today's Menu" },
   { key: 'combo_meal', label: 'Combo Meal' },
   { key: 'vegan_option', label: 'Vegan Option' },
 ] as const;
+
+export const categoryTranslations: Record<string, string> = {
+  'Rice Dishes': 'Iresi',
+  'Beans & Yam': 'Ewa ati Yam',
+  'Plantain Dishes': 'Dodo',
+  'Bean Cakes': 'Akara',
+  'Pepper Soups': 'Obe Ata',
+  'Nigerian Soups': 'Obe Naijiria',
+  'Pasta': 'Pasta',
+  'Peppered Proteins': 'Eran Ata',
+  'Snacks': 'Awon Onje',
+  'Sauces': 'Obe',
+  'Special Proteins': 'Eran Pataki',
+};
 
 export const defaultAddOns: AddOn[] = [
   { name: 'Extra Plantain', price: 2.50 },

@@ -4,7 +4,7 @@ import { useCart } from '@/context/CartContext';
 import { site } from '@/data/site';
 import { supabase } from '@/lib/supabase';
 
-type OrderType = 'Dine In' | 'Collection' | 'Delivery';
+type OrderType = 'Collection' | 'Delivery';
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, updateQuantity, removeItem, totalPrice, clearCart } = useCart();
@@ -133,7 +133,7 @@ function EmailCheckoutModal({
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [orderType, setOrderType] = useState<OrderType>('Collection');
+  const [orderType, setOrderType] = useState<OrderType>('Delivery');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [preferredDateTime, setPreferredDateTime] = useState('');
   const [specialRequests, setSpecialRequests] = useState(notes);
@@ -226,8 +226,8 @@ function EmailCheckoutModal({
 
           <div>
             <label className="block font-label text-[10px] tracking-wider text-are-primary/60 mb-2">Order type</label>
-            <div className="grid grid-cols-3 gap-2">
-              {(['Dine In', 'Collection', 'Delivery'] as OrderType[]).map((type) => (
+            <div className="grid grid-cols-2 gap-2">
+              {(['Delivery', 'Collection'] as OrderType[]).map((type) => (
                 <button key={type} type="button" onClick={() => setOrderType(type)}
                   className={`px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${orderType === type ? 'bg-are-gold text-are-black' : 'bg-are-primary/5 text-are-primary/60 hover:bg-are-primary/10'}`}>
                   {type}

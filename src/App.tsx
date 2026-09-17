@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingButtons from '@/components/FloatingButtons';
 import CartDrawer from '@/components/CartDrawer';
+import DeliveryPopup from '@/components/DeliveryPopup';
 import Home from '@/pages/Home';
 import Menu from '@/pages/Menu';
 import About from '@/pages/About';
@@ -44,6 +45,7 @@ function App() {
         <Footer />
         <FloatingButtons />
         <CartDrawer />
+        <DeliveryPopup />
       </CartProvider>
     </BrowserRouter>
   );

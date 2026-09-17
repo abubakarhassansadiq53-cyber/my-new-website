@@ -54,7 +54,7 @@ export default function Location() {
             eyebrow="Location"
             title="Find Us in"
             italicPart="Tallinn"
-            subtitle="Visit us at Nelgi tn 29 in Tallinn for authentic West African cuisine."
+            subtitle="Visit us at Nelgi 30 in Tallinn for authentic West African cuisine."
             light
           />
         </div>
@@ -122,7 +122,7 @@ export default function Location() {
                 <div className="flex-1 min-h-[300px] rounded-xl overflow-hidden">
                   <iframe
                     title="ARE location on Google Maps"
-                    src="https://www.google.com/maps?q=Nelgi+tn+29,+11213+Tallinn,+Estonia&output=embed"
+                    src="https://www.google.com/maps?q=Nelgi+30,+11213+Tallinn,+Estonia&output=embed"
                     width="100%"
                     height="100%"
                     style={{ border: 0, minHeight: '300px', filter: 'invert(0.9) hue-rotate(180deg) contrast(0.9)' }}
@@ -131,7 +131,7 @@ export default function Location() {
                   />
                 </div>
                 <a
-                  href="https://www.google.com/maps/dir/?api=1&destination=Nelgi+tn+29,+11213+Tallinn,+Estonia"
+                  href="https://www.google.com/maps/dir/?api=1&destination=Nelgi+30,+11213+Tallinn,+Estonia"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 bg-are-gold hover:bg-are-gold/90 text-are-black font-label text-sm font-semibold tracking-wider py-3.5 rounded-full transition-all duration-300 flex items-center justify-center gap-2"

@@ -44,13 +44,19 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
-            <Link to="/" className="flex items-center group" aria-label="African Restaurant Estonia home">
-              <img
-                src="https://i.imgur.com/JHfTvcb.png"
-                alt="African Restaurant Estonia"
-                className="h-16 w-auto max-w-[220px] object-contain transition-transform duration-300 group-hover:scale-[1.03]"
-                style={{ filter: 'drop-shadow(0 2px 8px rgba(0,0,0,0.3))' }}
-              />
+            <Link to="/" className="flex items-center group bg-white rounded-full pl-1 pr-3 py-1" aria-label="African Restaurant Estonia home">
+              <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-full overflow-hidden ring-2 ring-are-gold/50 transition-transform duration-300 group-hover:scale-105 group-hover:ring-are-gold shrink-0"
+                style={{ filter: 'drop-shadow(0 2px 8px rgba(216,154,39,0.4))' }}
+              >
+                <img
+                  src="https://i.imgur.com/JHfTvcb.png"
+                  alt="African Restaurant Estonia"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <span className="hidden sm:inline font-heading text-base font-bold text-are-primary tracking-wide ml-2">
+                ARE
+              </span>
             </Link>
 
             {/* Center links */}
